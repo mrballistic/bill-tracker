@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Financial Bill Tracker
+
+A personal financial bill tracker application designed to help individuals manage their bills and visualize spending patterns. This single-user web application provides a clean interface for tracking financial obligations and gaining insights through visual analytics.
+
+## Features
+
+- **Bill Management**
+  - Add, edit, view, and delete bills
+  - Track payment status (paid/unpaid)
+  - Categorize bills for better organization
+  - Add notes for additional context
+
+- **Financial Analytics**
+  - Visual breakdown of spending by category
+  - Monthly spending trends
+  - Payment status tracking
+  - Customized financial insights
+
+- **User Experience**
+  - Clean, intuitive Material UI interface
+  - Responsive design for desktop use
+  - Minimal setup required
+  - Privacy-focused (all data stored locally)
+
+## Technology Stack
+
+- **Frontend**: React 18 with Next.js 13+
+- **Language**: TypeScript 5.x
+- **UI Library**: Material UI (MUI) v5
+- **State Management**: React Context API
+- **Data Storage**: Local JSON files via Next.js API routes
+- **Data Visualization**: Recharts library
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18.17 or later
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/bill-tracker.git
+cd bill-tracker
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to use the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+bill-tracker/
+├── src/
+│   ├── app/          # App router components  
+│   │   └── api/      # API routes for data persistence
+│   ├── components/   # Reusable UI components
+│   │   ├── analytics/# Chart and analytics components
+│   │   ├── bills/    # Bill form and table components
+│   │   └── layout/   # Navigation and layout components
+│   ├── contexts/     # React Context providers
+│   ├── lib/          # Utility functions
+│   ├── models/       # TypeScript interfaces
+│   └── styles/       # Global styling
+├── public/           # Static assets
+└── data/             # Local data storage (JSON)
+```
 
-## Learn More
+## Development
 
-To learn more about Next.js, take a look at the following resources:
+The application uses Next.js API routes to handle data persistence:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Bills are stored in `data/bills.json`
+- All data is processed client-side with no external backend dependencies
+- State is managed with React Context API for simplicity
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[MIT](LICENSE)
