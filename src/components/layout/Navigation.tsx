@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import {
   AppBar,
   Toolbar,
@@ -17,7 +17,8 @@ import {
   ListItemIcon,
   ListItemText,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Link
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
@@ -59,23 +60,25 @@ export default function Navigation() {
       </Typography>
       <List>
         {navigationItems.map((item) => (
-          <Link href={item.href} key={item.name} passHref style={{ textDecoration: 'none', color: 'inherit' }}>
-            <ListItem 
-              button 
-              selected={pathname === item.href}
-              sx={{
-                '&.Mui-selected': {
+          <ListItem 
+            key={item.name}
+            component={NextLink}
+            href={item.href}
+            selected={pathname === item.href}
+            sx={{
+              textDecoration: 'none', 
+              color: 'inherit',
+              '&.Mui-selected': {
+                backgroundColor: 'primary.light',
+                '&:hover': {
                   backgroundColor: 'primary.light',
-                  '&:hover': {
-                    backgroundColor: 'primary.light',
-                  },
                 },
-              }}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.name} />
-            </ListItem>
-          </Link>
+              },
+            }}
+          >
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.name} />
+          </ListItem>
         ))}
       </List>
     </Box>
@@ -83,7 +86,7 @@ export default function Navigation() {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="static" component="nav">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             {isMobile ? (
@@ -119,22 +122,24 @@ export default function Navigation() {
                 </Typography>
                 <Box sx={{ flexGrow: 1, display: 'flex' }}>
                   {navigationItems.map((item) => (
-                    <Link key={item.name} href={item.href} passHref style={{ textDecoration: 'none' }}>
-                      <Button
-                        sx={{ 
-                          my: 2, 
-                          color: 'white', 
-                          display: 'block',
-                          backgroundColor: pathname === item.href ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
-                          '&:hover': {
-                            backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                          },
-                        }}
-                        startIcon={item.icon}
-                      >
-                        {item.name}
-                      </Button>
-                    </Link>
+                    <Button
+                      key={item.name}
+                      component={NextLink}
+                      href={item.href}
+                      sx={{ 
+                        my: 2, 
+                        color: 'white', 
+                        display: 'block',
+                        backgroundColor: pathname === item.href ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                        },
+                        textDecoration: 'none'
+                      }}
+                      startIcon={item.icon}
+                    >
+                      {item.name}
+                    </Button>
                   ))}
                 </Box>
               </>
@@ -150,6 +155,12 @@ export default function Navigation() {
         onClose={handleDrawerToggle}
         ModalProps={{
           keepMounted: true, // Better open performance on mobile
+        }}
+        sx={{
+          '& .MuiDrawer-paper': { 
+            boxSizing: 'border-box',
+            width: 240 
+          },
         }}
       >
         {drawer}
