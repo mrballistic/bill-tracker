@@ -17,8 +17,7 @@ import {
   ListItemIcon,
   ListItemText,
   useMediaQuery,
-  useTheme,
-  Link
+  useTheme
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
@@ -62,7 +61,7 @@ export default function Navigation() {
         {navigationItems.map((item) => (
           <ListItem 
             key={item.name}
-            component={NextLink}
+            component={NextLink as React.ElementType}
             href={item.href}
             selected={pathname === item.href}
             sx={{
@@ -86,7 +85,7 @@ export default function Navigation() {
 
   return (
     <>
-      <AppBar position="static" component="nav">
+      <AppBar position="static" component="nav" sx={{ flexShrink: 0 }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             {isMobile ? (
@@ -124,7 +123,7 @@ export default function Navigation() {
                   {navigationItems.map((item) => (
                     <Button
                       key={item.name}
-                      component={NextLink}
+                      component={NextLink as React.ElementType}
                       href={item.href}
                       sx={{ 
                         my: 2, 

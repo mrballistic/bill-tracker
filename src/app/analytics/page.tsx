@@ -13,19 +13,28 @@ function AnalyticsDashboard() {
   const [currentMonthBills, setCurrentMonthBills] = useState<Bill[]>([]);
   
   useEffect(() => {
-    if (bills.length > 0) {
+    if (bills && bills.length > 0) {
       setCurrentMonthBills(getCurrentMonthBills(bills));
+    } else {
+      setCurrentMonthBills([]);
     }
   }, [bills]);
   
-  // Calculate summary statistics
-  const totalAmount = calculateTotalAmount(bills);
-  const paidBills = bills.filter(bill => bill.isPaid);
-  const unpaidBills = bills.filter(bill => !bill.isPaid);
-  const paidAmount = calculateTotalAmount(paidBills);
-  const unpaidAmount = calculateTotalAmount(unpaidBills);
+  // Calculate summary statistics with safeguards
+  const totalAmount = bills && bills.length ? calculateTotalAmount(bills) : 0;
+  const paidBills = bills ? bills.filter(bill => bill.isPaid) : [];
+  const unpaidBills = bills ? bills.filter(bill => !bill.isPaid) : [];
+  const paidAmount = paidBills.length ? calculateTotalAmount(paidBills) : 0;
+  const unpaidAmount = unpaidBills.length ? calculateTotalAmount(unpaidBills) : 0;
 
-  const currentMonthTotal = calculateTotalAmount(currentMonthBills);
+  const currentMonthTotal = currentMonthBills.length ? calculateTotalAmount(currentMonthBills) : 0;
+  
+  // Format currency helper function with improved type checking
+  const formatCurrency = (amount: unknown): string => {
+    // Ensure the amount is a valid number
+    const numericAmount = typeof amount === 'number' ? amount : 0;
+    return numericAmount.toFixed(2);
+  };
   
   // Loading state
   if (loading) {
@@ -51,7 +60,7 @@ function AnalyticsDashboard() {
           <Paper elevation={2} sx={{ p: 2, textAlign: 'center', height: '100%' }}>
             <Typography variant="subtitle2" color="text.secondary">Total Bills</Typography>
             <Typography variant="h4" sx={{ mt: 1 }}>
-              {bills.length}
+              {bills ? bills.length : 0}
             </Typography>
           </Paper>
         </Grid>
@@ -59,7 +68,7 @@ function AnalyticsDashboard() {
           <Paper elevation={2} sx={{ p: 2, textAlign: 'center', height: '100%' }}>
             <Typography variant="subtitle2" color="text.secondary">Total Amount</Typography>
             <Typography variant="h4" sx={{ mt: 1 }}>
-              ${totalAmount.toFixed(2)}
+              ${formatCurrency(totalAmount)}
             </Typography>
           </Paper>
         </Grid>
@@ -67,7 +76,7 @@ function AnalyticsDashboard() {
           <Paper elevation={2} sx={{ p: 2, textAlign: 'center', height: '100%', bgcolor: 'success.light' }}>
             <Typography variant="subtitle2" color="text.secondary">Paid Amount</Typography>
             <Typography variant="h4" sx={{ mt: 1 }}>
-              ${paidAmount.toFixed(2)}
+              ${formatCurrency(paidAmount)}
             </Typography>
             <Typography variant="body2">
               ({paidBills.length} bills)
@@ -78,7 +87,7 @@ function AnalyticsDashboard() {
           <Paper elevation={2} sx={{ p: 2, textAlign: 'center', height: '100%', bgcolor: 'warning.light' }}>
             <Typography variant="subtitle2" color="text.secondary">Unpaid Amount</Typography>
             <Typography variant="h4" sx={{ mt: 1 }}>
-              ${unpaidAmount.toFixed(2)}
+              ${formatCurrency(unpaidAmount)}
             </Typography>
             <Typography variant="body2">
               ({unpaidBills.length} bills)
@@ -89,11 +98,11 @@ function AnalyticsDashboard() {
       
       {/* Charts */}
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <MonthlyBarChart bills={bills} />
+        <Grid item xs={12} md={12} lg={6}>
+          <MonthlyBarChart bills={bills || []} />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <CategoryPieChart bills={bills} />
+        <Grid item xs={12} md={12} lg={6}>
+          <CategoryPieChart bills={bills || []} />
         </Grid>
         
         {/* Current Month Stats */}
@@ -115,7 +124,7 @@ function AnalyticsDashboard() {
                 <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
                   <Typography variant="body2" color="text.secondary">Total This Month</Typography>
                   <Typography variant="h5" sx={{ mt: 1 }}>
-                    ${currentMonthTotal.toFixed(2)}
+                    ${formatCurrency(currentMonthTotal)}
                   </Typography>
                 </Box>
               </Grid>

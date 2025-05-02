@@ -8,8 +8,8 @@ import {
   XAxis, 
   YAxis, 
   CartesianGrid, 
-  Tooltip, 
-  Legend 
+  Tooltip,
+  TooltipProps
 } from 'recharts';
 import { Typography, Paper, Box } from '@mui/material';
 import { Bill } from '@/models/Bill';
@@ -67,9 +67,8 @@ export default function MonthlyBarChart({ bills }: MonthlyBarChartProps) {
       
       return aDate.getTime() - bDate.getTime();
     });
-
   // Custom tooltip to display formatted dollar amounts
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       return (
         <Paper sx={{ p: 1, boxShadow: theme.shadows[3] }}>
@@ -77,13 +76,13 @@ export default function MonthlyBarChart({ bills }: MonthlyBarChartProps) {
             {label}
           </Typography>
           <Typography variant="body2" color={theme.palette.primary.main}>
-            Total: ${payload[0].value.toFixed(2)}
+            Total: ${payload[0]?.value?.toFixed(2) || '0.00'}
           </Typography>
           <Typography variant="body2" color="success.main">
-            Paid: ${payload[1].value.toFixed(2)}
+            Paid: ${payload[1]?.value?.toFixed(2) || '0.00'}
           </Typography>
           <Typography variant="body2" color="error.main">
-            Unpaid: ${payload[2].value.toFixed(2)}
+            Unpaid: ${payload[2]?.value?.toFixed(2) || '0.00'}
           </Typography>
         </Paper>
       );
@@ -113,7 +112,7 @@ export default function MonthlyBarChart({ bills }: MonthlyBarChartProps) {
               tickFormatter={(value) => `$${value}`}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
+           
             <Bar dataKey="total" name="Total" fill={theme.palette.primary.main} />
             <Bar dataKey="paid" name="Paid" fill={theme.palette.success.main} />
             <Bar dataKey="unpaid" name="Unpaid" fill={theme.palette.error.main} />

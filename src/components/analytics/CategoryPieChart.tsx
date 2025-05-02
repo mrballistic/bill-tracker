@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from '@mui/material';
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, TooltipProps } from 'recharts';
 import { Typography, Paper, Box } from '@mui/material';
 import { Bill } from '@/models/Bill';
 import { calculateTotalByCategory } from '@/lib/billUtils';
@@ -48,13 +48,13 @@ export default function CategoryPieChart({ bills }: CategoryPieChartProps) {
   ];
 
   // Custom tooltip to display formatted dollar amounts
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       return (
         <Paper sx={{ p: 1, boxShadow: theme.shadows[3] }}>
-          <Typography variant="body2">{payload[0].name}</Typography>
+          <Typography variant="body2">{payload[0]?.name}</Typography>
           <Typography variant="body2" fontWeight="bold">
-            ${payload[0].value.toFixed(2)}
+            ${payload[0]?.value?.toFixed(2) || '0.00'}
           </Typography>
         </Paper>
       );
@@ -74,17 +74,20 @@ export default function CategoryPieChart({ bills }: CategoryPieChartProps) {
               data={data}
               cx="50%"
               cy="50%"
+              innerRadius={60}
               outerRadius={80}
+              paddingAngle={5}
               fill="#8884d8"
+              stroke="none"
               dataKey="value"
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+              
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
+           
           </PieChart>
         </ResponsiveContainer>
       </Box>
