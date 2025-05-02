@@ -1,44 +1,44 @@
-# Financial Bill Tracker
+# 💰 Financial Bill Tracker
 
 A personal financial bill tracker application designed to help individuals manage their bills and visualize spending patterns. This single-user web application provides a clean interface for tracking financial obligations and gaining insights through visual analytics.
 
-## Features
+## ✨ Features
 
-- **Bill Management**
-  - Add, edit, view, and delete bills
-  - Track payment status (paid/unpaid)
-  - Categorize bills for better organization
-  - Add notes for additional context
+- **💵 Bill Management**
+  - ➕ Add, edit, view, and delete bills
+  - ✅ Track payment status (paid/unpaid)
+  - 🏷️ Categorize bills for better organization
+  - 📝 Add notes for additional context
 
-- **Financial Analytics**
-  - Visual breakdown of spending by category
-  - Monthly spending trends
-  - Payment status tracking
-  - Customized financial insights
+- **📊 Financial Analytics**
+  - 🍩 Visual breakdown of spending by category
+  - 📈 Monthly spending trends
+  - 💲 Payment status tracking
+  - 🔍 Customized financial insights
 
-- **User Experience**
-  - Clean, intuitive Material UI interface
-  - Responsive design for desktop use
-  - Minimal setup required
-  - Privacy-focused (all data stored locally)
+- **🎨 User Experience**
+  - ✨ Clean, intuitive Material UI interface
+  - 📱 Responsive design for desktop use
+  - 🚀 Minimal setup required
+  - 🔒 Privacy-focused (all data stored locally)
 
-## Technology Stack
+## 🛠️ Technology Stack
 
-- **Frontend**: React 18 with Next.js 13+
-- **Language**: TypeScript 5.x
-- **UI Library**: Material UI (MUI) v5
-- **State Management**: React Context API
-- **Data Storage**: Local JSON files via Next.js API routes
-- **Data Visualization**: Recharts library
+- **🔷 Frontend**: React 18 with Next.js 13+
+- **📘 Language**: TypeScript 5.x
+- **🎭 UI Library**: Material UI (MUI) v5
+- **🧠 State Management**: React Context API
+- **💾 Data Storage**: Local JSON files via Next.js API routes
+- **📊 Data Visualization**: Recharts library
 
-## Getting Started
+## 🚀 Getting Started
 
-### Prerequisites
+### 📋 Prerequisites
 
 - Node.js 18.17 or later
 - npm or yarn
 
-### Installation
+### ⚙️ Installation
 
 1. Clone the repository:
 ```bash
@@ -62,7 +62,7 @@ yarn dev
 
 4. Open [http://localhost:3000](http://localhost:3000) with your browser to use the application.
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 bill-tracker/
@@ -81,14 +81,14 @@ bill-tracker/
 └── data/             # Local data storage (JSON)
 ```
 
-## Development
+## 👨‍💻 Development
 
 The application uses Next.js API routes to handle data persistence:
 
-- Bills are stored in `data/bills.json`
-- All data is processed client-side with no external backend dependencies
-- State is managed with React Context API for simplicity
+- 📄 Bills are stored in `data/bills.json`
+- 🔄 All data is processed client-side with no external backend dependencies
+- 🧩 State is managed with React Context API for simplicity
 
-## License
+## 📄 License
 
 [MIT](LICENSE)
