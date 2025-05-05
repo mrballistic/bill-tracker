@@ -98,4 +98,4 @@ The application uses Next.js API routes to handle data persistence:
 
 ## 📄 License
 
-[MIT](LICENSE)
+[MIT](LICENSE.md)
