@@ -55,7 +55,7 @@ export const BillProvider = ({ children }: BillProviderProps) => {
             return; // Exit early if API fetch was successful
           }
         } catch (apiError) {
-          console.log('API route not available, falling back to localStorage');
+          console.log('API route not available, falling back to localStorage', apiError);
           setIsStatic(true);
         }
         
