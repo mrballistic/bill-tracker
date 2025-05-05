@@ -32,13 +32,7 @@ export default function CategoryPieChart() {
             cornerRadius={3}
             activeOuterRadiusOffset={8}
             colors={{ scheme: 'nivo' }}
-            borderWidth={1}
-            borderColor={{
-              from: 'color',
-              modifiers: [['darker', 0.2]]
-            }}
-            arcLinkLabelsSkipAngle={10}
-            arcLabelsSkipAngle={10}
+
             
             tooltip={({ datum }) => (
               <Box

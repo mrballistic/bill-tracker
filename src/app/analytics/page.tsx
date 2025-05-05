@@ -116,7 +116,7 @@ function AnalyticsDashboard() {
       {/* Charts */}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         {/* Monthly Bar Chart - 3/4 width */}
-        <Box sx={{ width: '75%' }}>
+        <Box sx={{ width: '66%' }}>
           <MonthlyBarChart />
         </Box>
         
