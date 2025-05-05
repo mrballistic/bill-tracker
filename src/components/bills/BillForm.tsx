@@ -13,7 +13,6 @@ import {
   Checkbox, 
   Typography,
   Paper,
-  Grid,
   SelectChangeEvent
 } from '@mui/material';
 import { Bill, BillFormData, BILL_CATEGORIES } from '@/models/Bill';
@@ -59,11 +58,13 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
 
   // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
+    const isCheckbox = type === 'checkbox';
+    const checked = isCheckbox ? (e.target as HTMLInputElement).checked : false;
     
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: isCheckbox ? checked : value,
     }));
     
     // Clear error when field is updated
@@ -134,8 +135,8 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
       </Typography>
       
       <Box component="form" onSubmit={handleSubmit} noValidate>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ flex: { xs: '0 0 100%', sm: '0 0 calc(50% - 8px)' } }}>
             <TextField
               margin="normal"
               required
@@ -148,9 +149,9 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
               error={!!errors.name}
               helperText={errors.name}
             />
-          </Grid>
+          </Box>
           
-          <Grid item xs={12} sm={6}>
+          <Box sx={{ flex: { xs: '0 0 100%', sm: '0 0 calc(50% - 8px)' } }}>
             <TextField
               margin="normal"
               required
@@ -165,9 +166,9 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
               error={!!errors.amount}
               helperText={errors.amount}
             />
-          </Grid>
+          </Box>
           
-          <Grid item xs={12} sm={6}>
+          <Box sx={{ flex: { xs: '0 0 100%', sm: '0 0 calc(50% - 8px)' } }}>
             <TextField
               margin="normal"
               required
@@ -182,9 +183,9 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
               helperText={errors.date}
               InputLabelProps={{ shrink: true }}
             />
-          </Grid>
+          </Box>
           
-          <Grid item xs={12} sm={6}>
+          <Box sx={{ flex: { xs: '0 0 100%', sm: '0 0 calc(50% - 8px)' } }}>
             <FormControl fullWidth margin="normal">
               <InputLabel id="category-label">Category</InputLabel>
               <Select
@@ -202,9 +203,9 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
                 ))}
               </Select>
             </FormControl>
-          </Grid>
+          </Box>
           
-          <Grid item xs={12}>
+          <Box sx={{ flex: '0 0 100%' }}>
             <TextField
               margin="normal"
               fullWidth
@@ -216,9 +217,9 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
               value={formData.notes}
               onChange={handleChange}
             />
-          </Grid>
+          </Box>
           
-          <Grid item xs={12}>
+          <Box sx={{ flex: '0 0 100%' }}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -230,21 +231,19 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
               }
               label="Paid"
             />
-          </Grid>
+          </Box>
           
-          <Grid item xs={12}>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, gap: 2 }}>
-              {onCancel && (
-                <Button onClick={onCancel} variant="outlined">
-                  Cancel
-                </Button>
-              )}
-              <Button type="submit" variant="contained" color="primary">
-                {isEditMode ? 'Update Bill' : 'Add Bill'}
+          <Box sx={{ flex: '0 0 100%', display: 'flex', justifyContent: 'flex-end', mt: 2, gap: 2 }}>
+            {onCancel && (
+              <Button onClick={onCancel} variant="outlined">
+                Cancel
               </Button>
-            </Box>
-          </Grid>
-        </Grid>
+            )}
+            <Button type="submit" variant="contained" color="primary">
+              {isEditMode ? 'Update Bill' : 'Add Bill'}
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </Paper>
   );

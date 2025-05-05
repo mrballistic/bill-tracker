@@ -20,21 +20,24 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_BASE_PATH: /bill-tracker
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: 'npm'
           
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v3
         
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          echo "Installed dependencies successfully"
         
       - name: Create data directory and copy data files
         run: |
@@ -48,7 +51,16 @@ jobs:
           fi
           
       - name: Build with Next.js
-        run: npm run build
+        run: |
+          echo "Starting Next.js build process..."
+          npm run build || { 
+            echo "Build failed with exit code $?"
+            echo "Node version: $(node --version)"
+            echo "NPM version: $(npm --version)"
+            echo "Checking for package conflicts..."
+            npm ls || true
+            exit 1
+          }
         
       - name: Create .nojekyll file
         run: touch ./out/.nojekyll
@@ -66,11 +78,15 @@ jobs:
           echo "Contents of out directory:"
           ls -la out/
           echo "Checking for data directory:"
-          ls -la out/data || echo "Data directory not found, creating it now"
-          mkdir -p out/data
+          if [ -d "out/data" ]; then
+            ls -la out/data
+          else
+            echo "Data directory not found, creating it now"
+            mkdir -p out/data
+          fi
           
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./out
 
@@ -83,4 +99,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v2

@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { Bill } from '@/models/Bill';
+
+// Configure this route to work with static exports
+export const dynamic = 'force-static';
+export const revalidate = false;
 
 // Path to our JSON file for data storage
 const dataFilePath = path.join(process.cwd(), 'data', 'bills.json');

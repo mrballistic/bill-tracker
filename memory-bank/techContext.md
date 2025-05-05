@@ -3,10 +3,10 @@
 ## Technology Stack
 - **Frontend Framework**: React 18 with Next.js 13+
 - **Language**: TypeScript 5.x
-- **UI Library**: Material UI (MUI) v5
+- **UI Library**: Material UI (MUI) v7
 - **State Management**: React Context API
 - **Data Storage**: Local JSON files via Next.js API routes
-- **Data Visualization**: Recharts library
+- **Data Visualization**: Nivo (@nivo/pie, @nivo/bar) and Recharts libraries
 - **Build Tool**: Next.js built-in build system
 - **Development Environment**: npm for package management
 
