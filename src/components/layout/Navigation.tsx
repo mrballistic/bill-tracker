@@ -148,14 +148,24 @@ export default function Navigation() {
                         sx={{ 
                           my: 2, 
                           color: 'white', 
-                          display: 'block',
+                          display: 'flex',
+                          alignItems: 'center',
                           backgroundColor: pathname === item.href ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
                           '&:hover': {
                             backgroundColor: 'rgba(255, 255, 255, 0.25)',
                           },
                           textDecoration: 'none',
+                          ml: 1, // Add margin-left to create some space between buttons
+                          // Target the startIcon to improve alignment
+                          '& .MuiButton-startIcon': {
+                            marginRight: '4px', // Reduce space between icon and text
+                            marginLeft: 0,
+                            display: 'flex',
+                            alignItems: 'center'
+                          },
+                          // Create more balanced appearance
                           justifyContent: 'center',
-                          ml: 1 // Add margin-left to create some space between buttons
+                          gap: 1
                         }}
                         startIcon={item.icon}
                       >
