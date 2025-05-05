@@ -34,7 +34,7 @@ jobs:
       
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v4
       
       - name: Install dependencies
         run: npm ci
@@ -61,18 +61,25 @@ jobs:
           mkdir -p out/data
           cp public/data/bills.json out/data/ || echo "[]" > out/data/bills.json
       
-      # Manual artifact preparation and upload - avoiding upload-pages-artifact action
-      - name: Prepare artifact
+      - name: Verify index.html exists
         run: |
-          tar -cvf artifact.tar ./out
-
+          echo "Checking for index.html in output directory..."
+          ls -la out/
+          if [ ! -f out/index.html ]; then
+            echo "Warning: index.html not found in root, copying from app directory"
+            # Sometimes Next.js puts index.html in a subdirectory
+            if [ -f out/app/index.html ]; then
+              cp out/app/index.html out/
+            else
+              echo "<html><head><meta http-equiv=\"refresh\" content=\"0;URL='/bill-tracker'\" /></head><body>Redirecting to <a href=\"/bill-tracker\">/bill-tracker</a>...</body></html>" > out/index.html
+              echo "Created a redirect index.html"
+            fi
+          fi
+      
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: github-pages
-          path: artifact.tar
-          if-no-files-found: error
-          retention-days: 1
+          path: out
 
   # Deployment job
   deploy:
@@ -84,4 +91,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v3
