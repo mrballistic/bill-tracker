@@ -111,36 +111,58 @@ export default function Navigation() {
               </>
             ) : (
               <>
-                <Typography
-                  variant="h6"
-                  noWrap
-                  component="div"
-                  sx={{ mr: 4 }}
-                >
-                  💸 Financial Bill Tracker
-                </Typography>
-                <Box sx={{ flexGrow: 3, display: 'flex', flexDirection: 'row' }}>
-                  {navigationItems.map((item) => (
-                    <Button
-                      key={item.name}
-                      component={NextLink as React.ElementType}
-                      href={item.href}
-                      sx={{ 
-                        my: 2, 
-                        color: 'white', 
-                        display: 'block',
-                        backgroundColor: pathname === item.href ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
-                        '&:hover': {
-                          backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                        },
-                        textDecoration: 'none',
-                        justifyContent: 'center'
-                      }}
-                      startIcon={item.icon}
-                    >
-                      {item.name}
-                    </Button>
-                  ))}
+                {/* Flex container with 3 sections: empty space, title, navigation */}
+                <Box sx={{ 
+                  display: 'flex', 
+                  width: '100%', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between' 
+                }}>
+                  {/* Left empty space to balance the layout */}
+                  <Box sx={{ flex: 1 }} />
+                  
+                  {/* Centered title */}
+                  <Typography
+                    variant="h6"
+                    noWrap
+                    component="div"
+                    sx={{ 
+                      flex: 1,
+                      textAlign: 'center'
+                    }}
+                  >
+                    💸 Financial Bill Tracker
+                  </Typography>
+                  
+                  {/* Right-aligned navigation links */}
+                  <Box sx={{ 
+                    flex: 1, 
+                    display: 'flex', 
+                    justifyContent: 'flex-end'
+                  }}>
+                    {navigationItems.map((item) => (
+                      <Button
+                        key={item.name}
+                        component={NextLink as React.ElementType}
+                        href={item.href}
+                        sx={{ 
+                          my: 2, 
+                          color: 'white', 
+                          display: 'block',
+                          backgroundColor: pathname === item.href ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                          },
+                          textDecoration: 'none',
+                          justifyContent: 'center',
+                          ml: 1 // Add margin-left to create some space between buttons
+                        }}
+                        startIcon={item.icon}
+                      >
+                        {item.name}
+                      </Button>
+                    ))}
+                  </Box>
                 </Box>
               </>
             )}
