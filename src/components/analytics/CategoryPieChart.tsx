@@ -1,11 +1,10 @@
 'use client';
 
 import { ResponsivePie } from '@nivo/pie';
-import { Box, Paper, Typography, useTheme } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import { getSpendingByCategory, formatCurrency } from '@/lib/staticData';
 
 export default function CategoryPieChart() {
-  const theme = useTheme();
   const categoryData = getSpendingByCategory();
   
   // Transform data for the pie chart
@@ -26,12 +25,14 @@ export default function CategoryPieChart() {
         {chartData.length > 0 ? (
           <ResponsivePie
             data={chartData}
-            margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+            margin={{ top: 20, right: 30, bottom: 30, left: 30 }}
             innerRadius={0.5}
             padAngle={0.7}
             cornerRadius={3}
             activeOuterRadiusOffset={8}
             colors={{ scheme: 'nivo' }}
+            enableArcLabels={false}
+            enableArcLinkLabels={false}
 
             
             tooltip={({ datum }) => (
@@ -50,23 +51,7 @@ export default function CategoryPieChart() {
                 </Typography>
               </Box>
             )}
-            legends={[
-              {
-                anchor: 'bottom',
-                direction: 'row',
-                justify: false,
-                translateX: 0,
-                translateY: 56,
-                itemsSpacing: 0,
-                itemWidth: 100,
-                itemHeight: 18,
-                itemTextColor: theme.palette.text.secondary,
-                itemDirection: 'left-to-right',
-                itemOpacity: 1,
-                symbolSize: 18,
-                symbolShape: 'circle'
-              }
-            ]}
+           
           />
         ) : (
           <Box 
