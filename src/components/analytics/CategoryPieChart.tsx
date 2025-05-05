@@ -38,14 +38,8 @@ export default function CategoryPieChart() {
               modifiers: [['darker', 0.2]]
             }}
             arcLinkLabelsSkipAngle={10}
-            arcLinkLabelsTextColor={theme.palette.text.primary}
-            arcLinkLabelsThickness={2}
-            arcLinkLabelsColor={{ from: 'color' }}
             arcLabelsSkipAngle={10}
-            arcLabelsTextColor={{
-              from: 'color',
-              modifiers: [['darker', 2]]
-            }}
+            
             tooltip={({ datum }) => (
               <Box
                 sx={{
