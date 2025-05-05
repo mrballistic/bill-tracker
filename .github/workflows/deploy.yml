@@ -67,7 +67,7 @@ jobs:
           tar -cvf artifact.tar ./out
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: github-pages
           path: artifact.tar
