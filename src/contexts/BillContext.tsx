@@ -4,6 +4,16 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Bill, BillFormData } from '../models/Bill';
 import { createBill, sortBillsByDate } from '../lib/billUtils';
 
+// Helper to get the correct base path in both development and production
+const getBasePath = () => {
+  // In development, this will be empty
+  // In production with GitHub Pages, this will be '/bill-tracker' or whatever is set in NEXT_PUBLIC_BASE_PATH
+  return process.env.NEXT_PUBLIC_BASE_PATH || '';
+};
+
+// Storage key for localStorage
+const STORAGE_KEY = 'bill-tracker-bills';
+
 interface BillContextType {
   bills: Bill[];
   addBill: (billData: BillFormData) => void;
@@ -24,26 +34,63 @@ export const BillProvider = ({ children }: BillProviderProps) => {
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isStatic, setIsStatic] = useState(false);
 
-  // Load bills from local storage when component mounts
+  // Load bills when component mounts
   useEffect(() => {
     const loadBills = async () => {
       try {
         setLoading(true);
-        // Fetch bills from API route
-        const response = await fetch('/api/bills');
         
-        if (!response.ok) {
-          throw new Error('Failed to load bills');
+        // First try to fetch from API route
+        try {
+          const basePath = getBasePath();
+          const response = await fetch(`${basePath}/api/bills`);
+          
+          if (response.ok) {
+            const data = await response.json();
+            setBills(sortBillsByDate(data.bills || []));
+            setError(null);
+            setIsStatic(false);
+            return; // Exit early if API fetch was successful
+          }
+        } catch (apiError) {
+          console.log('API route not available, falling back to localStorage');
+          setIsStatic(true);
         }
         
-        const data = await response.json();
-        setBills(sortBillsByDate(data.bills));
-        setError(null);
+        // Fall back to localStorage if API fetch fails (static deployment)
+        try {
+          const storedBills = localStorage.getItem(STORAGE_KEY);
+          if (storedBills) {
+            setBills(sortBillsByDate(JSON.parse(storedBills)));
+          } else {
+            // Try to fetch the initial data file directly (useful for first load in static deployment)
+            try {
+              const basePath = getBasePath();
+              const staticResponse = await fetch(`${basePath}/data/bills.json`);
+              if (staticResponse.ok) {
+                const staticData = await staticResponse.json();
+                const initialBills = staticData.bills || [];
+                setBills(sortBillsByDate(initialBills));
+                // Also save to localStorage for future use
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(initialBills));
+              } else {
+                setBills([]);
+              }
+            } catch (staticError) {
+              console.error('Could not load static data file:', staticError);
+              setBills([]);
+            }
+          }
+        } catch (localStorageError) {
+          console.error('LocalStorage error:', localStorageError);
+          setBills([]);
+        }
+        
       } catch (err) {
         console.error('Error loading bills:', err);
         setError('Failed to load bills');
-        // Initialize with empty array if we can't load bills
         setBills([]);
       } finally {
         setLoading(false);
@@ -60,22 +107,35 @@ export const BillProvider = ({ children }: BillProviderProps) => {
       if (loading) return;
       
       try {
-        // Save bills via API route
-        await fetch('/api/bills', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ bills }),
-        });
+        if (isStatic) {
+          // Save to localStorage in static deployment
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(bills));
+        } else {
+          // Save bills via API route in development
+          const basePath = getBasePath();
+          await fetch(`${basePath}/api/bills`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ bills }),
+          });
+        }
       } catch (err) {
         console.error('Error saving bills:', err);
         setError('Failed to save bills');
+        
+        // Fallback to localStorage if API save fails
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(bills));
+        } catch (localStorageError) {
+          console.error('LocalStorage error:', localStorageError);
+        }
       }
     };
 
     saveBills();
-  }, [bills, loading]);
+  }, [bills, loading, isStatic]);
 
   // Add a new bill
   const addBill = (billData: BillFormData) => {
