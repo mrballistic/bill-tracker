@@ -114,75 +114,78 @@ function AnalyticsDashboard() {
       </Box>
       
       {/* Charts */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        {/* Monthly Bar Chart - 3/4 width */}
-        <Box sx={{ width: {
-          lg: '66%',
-          md: '66%',
-          xs: '100%' }}}>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', md: 'row' }, 
+        flexWrap: 'wrap', 
+        gap: 3,
+        mb: 3
+      }}>
+        {/* Monthly Bar Chart - 2/3 width */}
+        <Box sx={{ 
+          width: { xs: '100%', md: 'calc(66% - 12px)' }, 
+          flexGrow: 0
+        }}>
           <MonthlyBarChart />
         </Box>
         
-        {/* Category Pie Chart - Smaller width on larger screens */}
+        {/* Category Pie Chart - 1/3 width on larger screens */}
         <Box sx={{ 
-          width: { 
-            xs: '100%', 
-            md: '25%', 
-            lg: '25%' 
-          } 
+          width: { xs: '100%', md: 'calc(34% - 12px)' }, 
+          flexGrow: 0 
         }}>
           <CategoryPieChart />
         </Box>
-        
-        {/* Current Month Stats */}
-        <Box sx={{ width: '100%' }}>
-          <Paper elevation={2} sx={{ p: 3, mt: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Current Month Overview
-            </Typography>
+      </Box>
+      
+      {/* Current Month Stats */}
+      <Box sx={{ width: '100%' }}>
+        <Paper elevation={2} sx={{ p: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            Current Month Overview
+          </Typography>
+          <Box sx={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: 3 
+          }}>
             <Box sx={{ 
-              display: 'flex', 
-              flexWrap: 'wrap', 
-              gap: 3 
+              flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.33% - 16px)' },
+              flexGrow: 1
             }}>
-              <Box sx={{ 
-                flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.33% - 16px)' },
-                flexGrow: 1
-              }}>
-                <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-                  <Typography variant="body2" color="text.secondary">Bills This Month</Typography>
-                  <Typography variant="h5" sx={{ mt: 1 }}>
-                    {currentMonthBills.length}
-                  </Typography>
-                </Box>
-              </Box>
-              <Box sx={{ 
-                flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.33% - 16px)' },
-                flexGrow: 1
-              }}>
-                <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-                  <Typography variant="body2" color="text.secondary">Total This Month</Typography>
-                  <Typography variant="h5" sx={{ mt: 1 }}>
-                    ${formatCurrency(currentMonthTotal)}
-                  </Typography>
-                </Box>
-              </Box>
-              <Box sx={{ 
-                flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.33% - 16px)' },
-                flexGrow: 1
-              }}>
-                <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-                  <Typography variant="body2" color="text.secondary">% Paid This Month</Typography>
-                  <Typography variant="h5" sx={{ mt: 1 }}>
-                    {currentMonthBills.length === 0 
-                      ? '0%' 
-                      : (currentMonthBills.filter(bill => bill.isPaid).length / currentMonthBills.length * 100).toFixed(0) + '%'}
-                  </Typography>
-                </Box>
+              <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                <Typography variant="body2" color="text.secondary">Bills This Month</Typography>
+                <Typography variant="h5" sx={{ mt: 1 }}>
+                  {currentMonthBills.length}
+                </Typography>
               </Box>
             </Box>
-          </Paper>
-        </Box>
+            <Box sx={{ 
+              flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.33% - 16px)' },
+              flexGrow: 1
+            }}>
+              <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                <Typography variant="body2" color="text.secondary">Total This Month</Typography>
+                <Typography variant="h5" sx={{ mt: 1 }}>
+                  ${formatCurrency(currentMonthTotal)}
+                </Typography>
+              </Box>
+            </Box>
+            <Box sx={{ 
+              flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.33% - 16px)' },
+              flexGrow: 1
+            }}>
+              <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                <Typography variant="body2" color="text.secondary">% Paid This Month</Typography>
+                <Typography variant="h5" sx={{ mt: 1 }}>
+                  {currentMonthBills.length === 0 
+                    ? '0%' 
+                    : (currentMonthBills.filter(bill => bill.isPaid).length / currentMonthBills.length * 100).toFixed(0) + '%'}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Paper>
       </Box>
     </Container>
   );
