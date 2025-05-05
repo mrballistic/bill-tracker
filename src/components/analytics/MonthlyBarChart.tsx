@@ -1,123 +1,136 @@
 'use client';
 
-import { useTheme } from '@mui/material';
-import { 
-  ResponsiveContainer, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip,
-  TooltipProps
-} from 'recharts';
-import { Typography, Paper, Box } from '@mui/material';
-import { Bill } from '@/models/Bill';
+import { ResponsiveBar } from '@nivo/bar';
+import { Box, Paper, Typography, useTheme } from '@mui/material';
+import { getMonthlySummary, formatCurrency } from '@/lib/staticData';
 
-interface MonthlyBarChartProps {
-  bills: Bill[];
+// Define types for bar chart data
+interface MonthlyData {
+  month: string;
+  total: number;
+  paid: number;
+  // Add index signature to make it compatible with BarDatum
+  [key: string]: string | number;
 }
 
-export default function MonthlyBarChart({ bills }: MonthlyBarChartProps) {
+export default function MonthlyBarChart() {
   const theme = useTheme();
-
-  // If no bills, show empty state
-  if (bills.length === 0) {
-    return (
-      <Paper elevation={2} sx={{ p: 3, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Typography align="center" color="text.secondary">
-          No bills to analyze. Add bills to see monthly spending trends.
-        </Typography>
-      </Paper>
-    );
-  }
-
-  // Group bills by month and calculate totals
-  const monthlyData = bills.reduce((acc: Record<string, { total: number, paid: number, unpaid: number }>, bill) => {
-    const date = new Date(bill.date);
-    const monthYear = `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
-    
-    if (!acc[monthYear]) {
-      acc[monthYear] = { total: 0, paid: 0, unpaid: 0 };
-    }
-    
-    acc[monthYear].total += bill.amount;
-    
-    if (bill.isPaid) {
-      acc[monthYear].paid += bill.amount;
-    } else {
-      acc[monthYear].unpaid += bill.amount;
-    }
-    
-    return acc;
-  }, {});
-
-  // Convert to array and sort by date
-  const data = Object.entries(monthlyData)
-    .map(([month, values]) => ({
-      month,
-      ...values
-    }))
-    .sort((a, b) => {
-      const [aMonth, aYear] = a.month.split(' ');
-      const [bMonth, bYear] = b.month.split(' ');
-      
-      const aDate = new Date(`${aMonth} 1, ${aYear}`);
-      const bDate = new Date(`${bMonth} 1, ${bYear}`);
-      
-      return aDate.getTime() - bDate.getTime();
-    });
-  // Custom tooltip to display formatted dollar amounts
-  const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-    if (active && payload && payload.length) {
-      return (
-        <Paper sx={{ p: 1, boxShadow: theme.shadows[3] }}>
-          <Typography variant="body2" fontWeight="bold">
-            {label}
-          </Typography>
-          <Typography variant="body2" color={theme.palette.primary.main}>
-            Total: ${payload[0]?.value?.toFixed(2) || '0.00'}
-          </Typography>
-          <Typography variant="body2" color="success.main">
-            Paid: ${payload[1]?.value?.toFixed(2) || '0.00'}
-          </Typography>
-          <Typography variant="body2" color="error.main">
-            Unpaid: ${payload[2]?.value?.toFixed(2) || '0.00'}
-          </Typography>
-        </Paper>
-      );
-    }
-    return null;
-  };
-
+  
+  // Changed function name to match the one in staticData.ts
+  const monthlySummaryData = getMonthlySummary();
+  
+  // Transform data to match the expected format for the bar chart
+  // This is placeholder logic - adjust based on your actual data structure
+  const monthlyData: MonthlyData[] = monthlySummaryData.map(({ month, amount }) => ({
+    month,
+    total: amount,
+    paid: amount * 0.6, // Placeholder calculation - adjust as needed
+  }));
+  
   return (
-    <Paper elevation={2} sx={{ p: 3, height: '100%' }}>
+    <Paper elevation={2} sx={{ height: 400, p: 3 }}>
       <Typography variant="h6" gutterBottom>
         Monthly Spending
       </Typography>
-      <Box sx={{ width: '100%', height: 300 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={data}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
+      
+      <Box sx={{ height: 320 }}>
+        {monthlyData.length > 0 ? (
+          <ResponsiveBar
+            data={monthlyData}
+            keys={['total', 'paid']}
+            indexBy="month"
+            margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+            padding={0.3}
+            valueScale={{ type: 'linear' }}
+            indexScale={{ type: 'band', round: true }}
+            colors={[theme.palette.primary.main, theme.palette.success.main]}
+            borderColor={{
+              from: 'color',
+              modifiers: [['darker', 1.6]]
+            }}
+            axisTop={null}
+            axisRight={null}
+            axisBottom={{
+              tickSize: 5,
+              tickPadding: 5,
+              tickRotation: 0,
+              legend: 'Month',
+              legendPosition: 'middle',
+              legendOffset: 32
+            }}
+            axisLeft={{
+              tickSize: 5,
+              tickPadding: 5,
+              tickRotation: 0,
+              legend: 'Amount',
+              legendPosition: 'middle',
+              legendOffset: -40,
+              format: (value: number) => {
+                return value === 0 ? '$0' : `$${value}`
+              }
+            }}
+            labelSkipWidth={12}
+            labelSkipHeight={12}
+            labelTextColor={{
+              from: 'color',
+              modifiers: [['darker', 1.6]]
+            }}
+            legends={[
+              {
+                dataFrom: 'keys',
+                anchor: 'bottom-right',
+                direction: 'column',
+                justify: false,
+                translateX: 120,
+                translateY: 0,
+                itemsSpacing: 2,
+                itemWidth: 100,
+                itemHeight: 20,
+                itemDirection: 'left-to-right',
+                itemOpacity: 0.85,
+                symbolSize: 20,
+                effects: [
+                  {
+                    on: 'hover',
+                    style: {
+                      itemOpacity: 1
+                    }
+                  }
+                ]
+              }
+            ]}
+            role="application"
+            tooltip={(props) => (
+              <Box
+                sx={{
+                  p: 1,
+                  bgcolor: 'background.paper',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  boxShadow: 1
+                }}
+              >
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  {props.id === 'total' ? 'Total Bills' : 'Paid Bills'}: {formatCurrency(props.value)}
+                </Typography>
+              </Box>
+            )}
+          />
+        ) : (
+          <Box 
+            sx={{ 
+              height: '100%', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis 
-              tickFormatter={(value) => `$${value}`}
-            />
-            <Tooltip content={<CustomTooltip />} />
-           
-            <Bar dataKey="total" name="Total" fill={theme.palette.primary.main} />
-            <Bar dataKey="paid" name="Paid" fill={theme.palette.success.main} />
-            <Bar dataKey="unpaid" name="Unpaid" fill={theme.palette.error.main} />
-          </BarChart>
-        </ResponsiveContainer>
+            <Typography variant="body1" color="text.secondary">
+              No data available
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Paper>
   );

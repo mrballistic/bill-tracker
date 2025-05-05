@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Typography, Grid, Box, Paper } from '@mui/material';
+import { Container, Typography, Box, Paper } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Bill } from '@/models/Bill';
 import { BillProvider, useBills } from '@/contexts/BillContext';
@@ -55,24 +55,38 @@ function AnalyticsDashboard() {
       </Typography>
       
       {/* Summary Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
+      <Box sx={{ 
+        display: 'flex', 
+        flexWrap: 'wrap', 
+        gap: 3, 
+        mb: 4 
+      }}>
+        <Box sx={{ 
+          flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(25% - 18px)' },
+          flexGrow: 1
+        }}>
           <Paper elevation={2} sx={{ p: 2, textAlign: 'center', height: '100%' }}>
             <Typography variant="subtitle2" color="text.secondary">Total Bills</Typography>
             <Typography variant="h4" sx={{ mt: 1 }}>
               {bills ? bills.length : 0}
             </Typography>
           </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        </Box>
+        <Box sx={{ 
+          flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(25% - 18px)' },
+          flexGrow: 1
+        }}>
           <Paper elevation={2} sx={{ p: 2, textAlign: 'center', height: '100%' }}>
             <Typography variant="subtitle2" color="text.secondary">Total Amount</Typography>
             <Typography variant="h4" sx={{ mt: 1 }}>
               ${formatCurrency(totalAmount)}
             </Typography>
           </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        </Box>
+        <Box sx={{ 
+          flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(25% - 18px)' },
+          flexGrow: 1
+        }}>
           <Paper elevation={2} sx={{ p: 2, textAlign: 'center', height: '100%', bgcolor: 'success.light' }}>
             <Typography variant="subtitle2" color="text.secondary">Paid Amount</Typography>
             <Typography variant="h4" sx={{ mt: 1 }}>
@@ -82,8 +96,11 @@ function AnalyticsDashboard() {
               ({paidBills.length} bills)
             </Typography>
           </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        </Box>
+        <Box sx={{ 
+          flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(25% - 18px)' },
+          flexGrow: 1
+        }}>
           <Paper elevation={2} sx={{ p: 2, textAlign: 'center', height: '100%', bgcolor: 'warning.light' }}>
             <Typography variant="subtitle2" color="text.secondary">Unpaid Amount</Typography>
             <Typography variant="h4" sx={{ mt: 1 }}>
@@ -93,42 +110,64 @@ function AnalyticsDashboard() {
               ({unpaidBills.length} bills)
             </Typography>
           </Paper>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
       
       {/* Charts */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={12} lg={6}>
-          <MonthlyBarChart bills={bills || []} />
-        </Grid>
-        <Grid item xs={12} md={12} lg={6}>
-          <CategoryPieChart bills={bills || []} />
-        </Grid>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        {/* Monthly Bar Chart - Full width */}
+        <Box sx={{ width: '100%' }}>
+          <MonthlyBarChart />
+        </Box>
+        
+        {/* Category Pie Chart - Smaller width on larger screens */}
+        <Box sx={{ 
+          width: { 
+            xs: '100%', 
+            md: '50%', 
+            lg: '25%' 
+          } 
+        }}>
+          <CategoryPieChart />
+        </Box>
         
         {/* Current Month Stats */}
-        <Grid item xs={12}>
+        <Box sx={{ width: '100%' }}>
           <Paper elevation={2} sx={{ p: 3, mt: 2 }}>
             <Typography variant="h6" gutterBottom>
               Current Month Overview
             </Typography>
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={6} md={4}>
+            <Box sx={{ 
+              display: 'flex', 
+              flexWrap: 'wrap', 
+              gap: 3 
+            }}>
+              <Box sx={{ 
+                flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.33% - 16px)' },
+                flexGrow: 1
+              }}>
                 <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
                   <Typography variant="body2" color="text.secondary">Bills This Month</Typography>
                   <Typography variant="h5" sx={{ mt: 1 }}>
                     {currentMonthBills.length}
                   </Typography>
                 </Box>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
+              </Box>
+              <Box sx={{ 
+                flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.33% - 16px)' },
+                flexGrow: 1
+              }}>
                 <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
                   <Typography variant="body2" color="text.secondary">Total This Month</Typography>
                   <Typography variant="h5" sx={{ mt: 1 }}>
                     ${formatCurrency(currentMonthTotal)}
                   </Typography>
                 </Box>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
+              </Box>
+              <Box sx={{ 
+                flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.33% - 16px)' },
+                flexGrow: 1
+              }}>
                 <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
                   <Typography variant="body2" color="text.secondary">% Paid This Month</Typography>
                   <Typography variant="h5" sx={{ mt: 1 }}>
@@ -137,11 +176,11 @@ function AnalyticsDashboard() {
                       : (currentMonthBills.filter(bill => bill.isPaid).length / currentMonthBills.length * 100).toFixed(0) + '%'}
                   </Typography>
                 </Box>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           </Paper>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Container>
   );
 }

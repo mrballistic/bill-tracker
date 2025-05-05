@@ -55,7 +55,7 @@ export default function Navigation() {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        Financial Bill Tracker
+      💸 Financial Bill Tracker
       </Typography>
       <List>
         {navigationItems.map((item) => (
@@ -106,7 +106,7 @@ export default function Navigation() {
                   component="div"
                   sx={{ flexGrow: 1 }}
                 >
-                  Financial Bill Tracker
+                  💸 Financial Bill Tracker
                 </Typography>
               </>
             ) : (
@@ -117,9 +117,9 @@ export default function Navigation() {
                   component="div"
                   sx={{ mr: 4 }}
                 >
-                  Financial Bill Tracker
+                  💸 Financial Bill Tracker
                 </Typography>
-                <Box sx={{ flexGrow: 1, display: 'flex' }}>
+                <Box sx={{ flexGrow: 3, display: 'flex', flexDirection: 'row' }}>
                   {navigationItems.map((item) => (
                     <Button
                       key={item.name}
@@ -133,7 +133,8 @@ export default function Navigation() {
                         '&:hover': {
                           backgroundColor: 'rgba(255, 255, 255, 0.25)',
                         },
-                        textDecoration: 'none'
+                        textDecoration: 'none',
+                        justifyContent: 'center'
                       }}
                       startIcon={item.icon}
                     >
