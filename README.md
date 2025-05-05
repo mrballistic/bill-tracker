@@ -2,6 +2,12 @@
 
 A personal financial bill tracker application designed to help individuals manage their bills and visualize spending patterns. This single-user web application provides a clean interface for tracking financial obligations and gaining insights through visual analytics.
 
+## 🌐 Live Demo
+
+Access the live application at: [https://mrballistic.github.io/bill-tracker](https://mrballistic.github.io/bill-tracker)
+
+The application is deployed on GitHub Pages and uses localStorage for data persistence in the deployed environment.
+
 ## ✨ Features
 
 - **💵 Bill Management**
@@ -26,10 +32,11 @@ A personal financial bill tracker application designed to help individuals manag
 
 - **🔷 Frontend**: React 18 with Next.js 13+
 - **📘 Language**: TypeScript 5.x
-- **🎭 UI Library**: Material UI (MUI) v5
+- **🎭 UI Library**: Material UI (MUI) v7
 - **🧠 State Management**: React Context API
-- **💾 Data Storage**: Local JSON files via Next.js API routes
-- **📊 Data Visualization**: Recharts library
+- **💾 Data Storage**: Local JSON files and localStorage for production
+- **📊 Data Visualization**: Nivo (@nivo/pie, @nivo/bar) and Recharts libraries
+- **🚀 Deployment**: GitHub Pages via GitHub Actions
 
 ## 🚀 Getting Started
 
