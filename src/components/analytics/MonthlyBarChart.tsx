@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useBills } from '@/contexts/BillContext';
 import type { Bill } from '@/models/Bill';
 
@@ -223,22 +223,7 @@ export default function MonthlyBarChart() {
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="month" 
-                  label={{ 
-                    value: 'Month', 
-                    position: 'insideBottom', 
-                    offset: -5 
-                  }} 
-                />
-                <YAxis 
-                  label={{ 
-                    value: 'Amount ($)', 
-                    angle: -90, 
-                    position: 'insideLeft' 
-                  }}
-                  tickFormatter={(value) => `$${value}`}
-                />
+               
                 <Tooltip content={<CustomTooltip />} />
                
                 <Bar 
