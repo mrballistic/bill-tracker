@@ -140,7 +140,7 @@ export default function MonthlyBarChart() {
   };
 
   // Custom tooltip for better accessibility
-  const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+  const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
       const monthData = payload[0].payload;
       return (
@@ -156,7 +156,7 @@ export default function MonthlyBarChart() {
           role="tooltip"
           aria-live="polite"
         >
-          <Typography variant="subtitle2">{monthData.monthName} {label?.split('/')[1] || ''}</Typography>
+          <Typography variant="subtitle2">{monthData.monthName} {monthData.month.split('/')[1] || ''}</Typography>
           <Typography variant="body2" color="text.secondary">
             {monthData.formattedTotal}
           </Typography>
