@@ -9,6 +9,8 @@
 - **Data Visualization**: Nivo (@nivo/pie, @nivo/bar) and Recharts libraries
 - **Build Tool**: Next.js built-in build system
 - **Development Environment**: npm for package management
+- **Linting**: ESLint with TypeScript and React plugin rules
+- **Design Standards**: Comprehensive UI/UX design principles documented
 
 ## Development Setup
 ```bash
@@ -52,6 +54,20 @@ npm run lint
 - `eslint`: Code quality and consistency
 - `prettier`: Code formatting
 - `@types/*`: TypeScript type definitions
+
+## Code Quality and Standards
+### Linting Configuration
+- **ESLint**: Configured with TypeScript and React-specific rules
+  - TypeScript rules focus on type safety and best practices
+  - React rules enforce component patterns and prevent common pitfalls
+  - Core JavaScript rules catch potential errors and enforce consistent style
+
+### Design Principles
+- **Visual Design**: Clean visual hierarchy, consistent styling, and proper typography
+- **Interaction Design**: Intuitive navigation, familiar UI components, clear calls-to-action
+- **Accessibility**: Following WCAG guidelines for web accessibility
+- **Responsive Design**: Desktop-focused layouts with consistent component spacing
+- **Performance**: Optimized assets and efficient rendering
 
 ## Project Structure
 ```

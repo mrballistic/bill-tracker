@@ -37,6 +37,8 @@ The application is deployed on GitHub Pages and uses localStorage for data persi
 - **💾 Data Storage**: Local JSON files and localStorage for production
 - **📊 Data Visualization**: Nivo (@nivo/pie, @nivo/bar) and Recharts libraries
 - **🚀 Deployment**: GitHub Pages via GitHub Actions
+- **🔍 Code Quality**: ESLint with TypeScript and React plugins
+- **🎨 Design Standards**: Comprehensive UI/UX design principles
 
 ## 🚀 Getting Started
 
@@ -95,6 +97,26 @@ The application uses Next.js API routes to handle data persistence:
 - 📄 Bills are stored in `data/bills.json`
 - 🔄 All data is processed client-side with no external backend dependencies
 - 🧩 State is managed with React Context API for simplicity
+
+## 🎨 Design & Code Quality
+
+### Design Principles
+The project follows established UI/UX design principles:
+
+- **Visual Hierarchy**: Clear organization of elements to guide user attention
+- **Consistent UI**: Unified styling throughout the application
+- **Accessibility**: Following WCAG guidelines for better usability
+- **Responsive Design**: Adapts to different desktop screen sizes
+- **Performance**: Optimized loading and rendering for smooth experience
+
+### Code Quality Standards
+The codebase is maintained with strict quality standards:
+
+- **TypeScript**: Strict type-checking for improved code reliability
+- **ESLint**: Configured with TypeScript and React-specific rules
+- **Component Patterns**: Following React best practices for component organization
+- **Semantic HTML**: Using appropriate HTML elements for better accessibility
+- **Consistent Styling**: Structured MUI theming for visual consistency
 
 ## 📄 License
 
