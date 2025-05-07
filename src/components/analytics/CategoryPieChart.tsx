@@ -2,43 +2,32 @@
 
 import { useMemo } from 'react';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useBills } from '@/contexts/BillContext';
 import { calculateTotalByCategory } from '@/lib/billUtils';
 
-// Define types for category data
+// Define interfaces for our data structures
 interface CategoryDataItem {
   category: string;
   total: number;
 }
 
-// Define types for chart data
 interface ChartDataItem {
   name: string;
   value: number;
   formattedValue: string;
 }
 
-// Define custom tooltip props
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    name: string;
-    value: number;
-    payload: ChartDataItem;
-  }>;
-}
-
 export default function CategoryPieChart() {
   const theme = useTheme();
   const { bills } = useBills();
   
-  // Calculate category totals and convert to array format for the chart
+  // Calculate category totals
   const categoryData = useMemo(() => {
-    const categoryTotals = calculateTotalByCategory(bills);
-    return Object.keys(categoryTotals).map(category => ({
+    const totals = calculateTotalByCategory(bills);
+    return Object.entries(totals).map(([category, total]): CategoryDataItem => ({
       category,
-      total: categoryTotals[category]
+      total
     }));
   }, [bills]);
   
@@ -64,15 +53,19 @@ export default function CategoryPieChart() {
       name: category.category,
       value: category.total,
       formattedValue: new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
+      style: 'currency',
+      currency: 'USD'
       }).format(category.total)
     }));
   }, [categoryData]);
   
   // Calculate total spending for the summary
   const totalSpending = useMemo(() => {
-    return categoryData.reduce((sum: number, category: CategoryDataItem) => sum + (category.total || 0), 0);
+    // Ensure categoryData is an array before using reduce
+    if (Array.isArray(categoryData)) {
+      return categoryData.reduce((sum, category) => sum + (category.total || 0), 0);
+    }
+    return 0; // Return 0 if categoryData is not an array
   }, [categoryData]);
   
   // Format total spending for display
@@ -80,6 +73,18 @@ export default function CategoryPieChart() {
     style: 'currency',
     currency: 'USD'
   }).format(totalSpending);
+
+  // Define interface for tooltip props
+  interface CustomTooltipProps {
+    active?: boolean;
+    payload?: Array<{
+      name: string;
+      value: number;
+      payload: {
+        formattedValue: string;
+      };
+    }>;
+  }
 
   // Custom tooltip for better accessibility
   const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
@@ -183,14 +188,13 @@ export default function CategoryPieChart() {
                   fill="#8884d8"
                   dataKey="value"
                   nameKey="name"
-                  label={({ name, percent }: { name: string, percent: number }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  strokeWidth={0}
                 >
                   {chartData.map((entry: ChartDataItem, index: number) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="none" />
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
-                <Legend />
               </PieChart>
             </ResponsiveContainer>
           </Box>
