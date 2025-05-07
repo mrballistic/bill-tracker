@@ -48,7 +48,8 @@ export default function MonthlyBarChart() {
       if (!bill.date || typeof bill.amount !== 'number') return;
       
       const date = new Date(bill.date);
-      const monthYear = `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
+      // Format consistently as MM/YYYY to match groupBillsByMonth
+      const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
       
       if (!monthlyTotals[monthYear]) {
         monthlyTotals[monthYear] = 0;
@@ -65,15 +66,26 @@ export default function MonthlyBarChart() {
   
   // Format for chart display
   const chartData = useMemo(() => {
-    return monthlyData.map(monthGroup => ({
-      month: monthGroup.month,
-      total: monthGroup.total,
-      formattedTotal: new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-      }).format(monthGroup.total),
-      monthName: new Date(2022, parseInt(monthGroup.month.split('/')[0]) - 1).toLocaleString('default', { month: 'long' })
-    })).sort((a, b) => {
+    return monthlyData.map(monthGroup => {
+      // Safely extract month and year
+      const parts = monthGroup.month.split('/');
+      const monthIndex = parseInt(parts[0]) - 1; // 0-based month index
+      const year = parseInt(parts[1]);
+      
+      // Create a valid date object
+      const date = new Date(year, monthIndex);
+      
+      return {
+        month: monthGroup.month,
+        total: monthGroup.total,
+        formattedTotal: new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD'
+        }).format(monthGroup.total),
+        monthName: date.toLocaleString('default', { month: 'long' }),
+        year: year.toString()
+      };
+    }).sort((a, b) => {
       // Sort by month in chronological order
       const [aMonth, aYear] = a.month.split('/').map(n => parseInt(n));
       const [bMonth, bYear] = b.month.split('/').map(n => parseInt(n));
@@ -97,7 +109,7 @@ export default function MonthlyBarChart() {
 
   // Creating the accessible chart summary
   const chartSummary = chartData.map(item => 
-    `${item.monthName} ${item.month.split('/')[1]}: ${item.formattedTotal}`
+    `${item.monthName} ${item.year}: ${item.formattedTotal}`
   ).join('; ');
 
   // Handle keyboard focus for the chart
@@ -132,6 +144,7 @@ export default function MonthlyBarChart() {
         total: number;
         formattedTotal: string;
         monthName: string;
+        year: string;
       };
       value?: number;
       name?: string;
@@ -156,7 +169,7 @@ export default function MonthlyBarChart() {
           role="tooltip"
           aria-live="polite"
         >
-          <Typography variant="subtitle2">{monthData.monthName} {monthData.month.split('/')[1] || ''}</Typography>
+          <Typography variant="subtitle2">{monthData.monthName} {monthData.year}</Typography>
           <Typography variant="body2" color="text.secondary">
             {monthData.formattedTotal}
           </Typography>
@@ -249,7 +262,7 @@ export default function MonthlyBarChart() {
             <tbody>
               {chartData.map((item, index) => (
                 <tr key={index}>
-                  <th scope="row">{item.monthName} {item.month.split('/')[1]}</th>
+                  <th scope="row">{item.monthName} {item.year}</th>
                   <td>{item.formattedTotal}</td>
                 </tr>
               ))}
