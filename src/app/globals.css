@@ -40,3 +40,68 @@ a {
     color-scheme: dark;
   }
 }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus styles for WCAG 2.4.7 Focus Visible */
+*:focus-visible {
+  outline: 3px solid #1565c0;
+  outline-offset: 2px;
+}
+
+/* Ensure interactive elements have hover effects for WCAG 1.4.13 Content on Hover or Focus */
+button:hover,
+a:hover,
+[role="button"]:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover {
+  cursor: pointer;
+}
+
+/* Ensure line height is sufficient for readability (WCAG 1.4.12) */
+p, h1, h2, h3, h4, h5, h6, li, td, th {
+  line-height: 1.5;
+}
+
+/* Skip link - accessibility feature */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #2d78e2;
+  color: white;
+  padding: 8px;
+  z-index: 9999;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid #4d90fe;
+}
+
+/* Focus visible enhancements */
+:focus {
+  outline: 2px solid #4d90fe;
+  outline-offset: 2px;
+}
+
+/* Only show focus outlines when using keyboard navigation */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid #4d90fe;
+  outline-offset: 2px;
+}

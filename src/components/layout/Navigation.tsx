@@ -17,11 +17,28 @@ import {
   ListItemIcon,
   ListItemText,
   useMediaQuery,
-  useTheme
+  useTheme,
+  styled
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import InsightsIcon from '@mui/icons-material/Insights';
+
+// Skip link styling to make it visible only when focused
+const SkipLink = styled('a')(({ theme }) => ({
+  position: 'absolute',
+  top: '-40px',
+  left: 0,
+  background: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  padding: theme.spacing(1),
+  zIndex: theme.zIndex.tooltip,
+  transition: 'top 0.2s',
+  textDecoration: 'none',
+  '&:focus': {
+    top: 0,
+  },
+}));
 
 interface NavigationItem {
   name: string;
@@ -92,6 +109,9 @@ export default function Navigation() {
 
   return (
     <>
+      {/* Skip link for keyboard navigation */}
+      <SkipLink href="#main-content">Skip to main content</SkipLink>
+      
       <AppBar position="static" component="nav" sx={{ flexShrink: 0 }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>

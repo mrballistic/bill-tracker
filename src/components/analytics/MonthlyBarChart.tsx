@@ -1,195 +1,277 @@
 'use client';
 
-import { ResponsiveBar } from '@nivo/bar';
-import { Box, Paper, Typography, useTheme, BoxProps } from '@mui/material';
-import React, { ReactNode } from 'react';
+import React, { useMemo } from 'react';
+import { Box, Paper, Typography, useTheme } from '@mui/material';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useBills } from '@/contexts/BillContext';
+import type { Bill } from '@/models/Bill';
 
-// Custom VisuallyHidden component for screen reader accessibility
-const VisuallyHidden = ({ children, ...props }: BoxProps & { children: ReactNode }) => (
-  <Box
-    {...props}
-    sx={{
-      border: 0, 
-      clip: 'rect(0 0 0 0)', 
-      height: '1px', 
-      margin: '-1px',
-      overflow: 'hidden', 
-      padding: 0, 
-      position: 'absolute', 
-      width: '1px',
-      whiteSpace: 'nowrap',
-      ...props.sx
-    }}
-  >
-    {children}
-  </Box>
-);
-import { getMonthlySummary, formatCurrency } from '@/lib/staticData';
+/**
+ * Groups bills by month and calculates the total amount for each month
+ * @param bills Array of bill objects
+ * @returns Array of objects with month (MM/YYYY) and total amount
+ */
+export const groupBillsByMonth = (bills: Bill[]): { month: string; total: number }[] => {
+  // Create a map to store totals by month
+  const monthlyTotals = new Map<string, number>();
 
-// Define types for bar chart data
-interface MonthlyData {
-  month: string;
-  total: number;
-  paid: number;
-  // Add index signature to make it compatible with BarDatum
-  [key: string]: string | number;
-}
+  // Process each bill
+  bills.forEach(bill => {
+    // Make sure we have a valid date and amount
+     if (!bill.date || typeof bill.amount !== 'number') return;
+
+    // Format the month as MM/YYYY
+    const date = new Date(bill.date);
+    const month = `${date.getMonth() + 1}/${date.getFullYear()}`;
+    
+    // Add to the existing total or set a new one
+    const currentTotal = monthlyTotals.get(month) || 0;
+    monthlyTotals.set(month, currentTotal + bill.amount);
+  });
+
+  // Convert the map to an array of objects
+  return Array.from(monthlyTotals).map(([month, total]) => ({
+    month,
+    total
+  }));
+};
 
 export default function MonthlyBarChart() {
   const theme = useTheme();
+  const { bills } = useBills();
   
-  // Changed function name to match the one in staticData.ts
-  const monthlySummaryData = getMonthlySummary();
-  
-  // Transform data to match the expected format for the bar chart
-  // This is placeholder logic - adjust based on your actual data structure
-  const monthlyData: MonthlyData[] = monthlySummaryData.map(({ month, amount }) => ({
-    month,
-    total: amount,
-    paid: amount * 0.6, // Placeholder calculation - adjust as needed
-  }));
+  // Group bills by month
+  const monthlyData = useMemo(() => {
+    const monthlyTotals: {[key: string]: number} = {};
+    
+    bills.forEach(bill => {
+      if (!bill.date || typeof bill.amount !== 'number') return;
+      
+      const date = new Date(bill.date);
+      const monthYear = `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
+      
+      if (!monthlyTotals[monthYear]) {
+        monthlyTotals[monthYear] = 0;
+      }
+      
+      monthlyTotals[monthYear] += bill.amount;
+    });
 
-  // Create accessible text summary of the chart data for screen readers
-  const accessibleSummary = monthlyData.length > 0
-    ? `Monthly spending summary: ${monthlyData.map(item => 
-        `${item.month}: Total: ${formatCurrency(item.total as number)}, Paid: ${formatCurrency(item.paid as number)}`
-      ).join(', ')}`
-    : 'No monthly spending data is available.';
+    return Object.entries(monthlyTotals).map(([month, total]) => ({
+      month,
+      total
+    }));
+  }, [bills]);
   
+  // Format for chart display
+  const chartData = useMemo(() => {
+    return monthlyData.map(monthGroup => ({
+      month: monthGroup.month,
+      total: monthGroup.total,
+      formattedTotal: new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(monthGroup.total),
+      monthName: new Date(2022, parseInt(monthGroup.month.split('/')[0]) - 1).toLocaleString('default', { month: 'long' })
+    })).sort((a, b) => {
+      // Sort by month in chronological order
+      const [aMonth, aYear] = a.month.split('/').map(n => parseInt(n));
+      const [bMonth, bYear] = b.month.split('/').map(n => parseInt(n));
+      return (aYear * 12 + aMonth) - (bYear * 12 + bMonth);
+    });
+  }, [monthlyData]);
+
+  // Calculate highest monthly total for accessible description
+  const highestMonth = useMemo(() => {
+    if (chartData.length === 0) return null;
+    return chartData.reduce((max, current) => 
+      current.total > max.total ? current : max, chartData[0]);
+  }, [chartData]);
+
+  // Calculate lowest monthly total for accessible description
+  const lowestMonth = useMemo(() => {
+    if (chartData.length === 0) return null;
+    return chartData.reduce((min, current) => 
+      current.total < min.total ? current : min, chartData[0]);
+  }, [chartData]);
+
+  // Creating the accessible chart summary
+  const chartSummary = chartData.map(item => 
+    `${item.monthName} ${item.month.split('/')[1]}: ${item.formattedTotal}`
+  ).join('; ');
+
+  // Handle keyboard focus for the chart
+  const handleChartKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      // Announce chart summary for screen readers
+      const announcement = document.getElementById('monthly-chart-announcement');
+      if (announcement) {
+        let message = `Monthly spending breakdown: ${chartSummary}.`;
+        if (highestMonth) {
+          message += ` Highest spending in ${highestMonth.monthName} at ${highestMonth.formattedTotal}.`;
+        }
+        if (lowestMonth) {
+          message += ` Lowest spending in ${lowestMonth.monthName} at ${lowestMonth.formattedTotal}.`;
+        }
+        
+        announcement.textContent = message;
+        announcement.setAttribute('aria-live', 'assertive');
+        setTimeout(() => {
+          announcement.setAttribute('aria-live', 'off');
+        }, 3000);
+      }
+    }
+  };
+
+  // Define type for our custom tooltip props
+  type CustomTooltipProps = {
+    active?: boolean;
+    payload?: {
+      payload: {
+        month: string;
+        total: number;
+        formattedTotal: string;
+        monthName: string;
+      };
+      value?: number;
+      name?: string;
+    }[];
+    label?: string;
+  };
+
+  // Custom tooltip for better accessibility
+  const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+    if (active && payload && payload.length) {
+      const monthData = payload[0].payload;
+      return (
+        <Box
+          sx={{
+            backgroundColor: 'background.paper',
+            p: 2,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 1,
+            boxShadow: 1,
+          }}
+          role="tooltip"
+          aria-live="polite"
+        >
+          <Typography variant="subtitle2">{monthData.monthName} {label?.split('/')[1] || ''}</Typography>
+          <Typography variant="body2" color="text.secondary">
+            {monthData.formattedTotal}
+          </Typography>
+        </Box>
+      );
+    }
+    return null;
+  };
+
   return (
-    <Paper elevation={2} sx={{ height: 400, p: 3 }}>
-      <Typography variant="h6" component="h2" id="bar-chart-title" gutterBottom>
+    <Paper 
+      elevation={2} 
+      sx={{ p: 3, mb: 3, height: '100%' }}
+      aria-label="Monthly spending bar chart"
+    >
+      <Typography variant="h6" component="h2" gutterBottom>
         Monthly Spending
       </Typography>
       
-      {/* Visually hidden description for screen readers */}
-      <VisuallyHidden>
-        <p id="bar-chart-desc">{accessibleSummary}</p>
-      </VisuallyHidden>
+      {/* Hidden element for screen reader announcements */}
+      <div id="monthly-chart-announcement" className="sr-only" aria-live="off"></div>
       
-      <Box 
-        sx={{ height: 320 }}
-        role="img"
-        aria-labelledby="bar-chart-title"
-        aria-describedby="bar-chart-desc"
+      {/* Text description for screen readers */}
+      <Typography 
+        component="div" 
+        className="sr-only"
+        aria-live="polite"
       >
-        {monthlyData.length > 0 ? (
-          <ResponsiveBar
-            data={monthlyData}
-            keys={['total', 'paid']}
-            indexBy="month"
-            margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-            padding={0.3}
-            valueScale={{ type: 'linear' }}
-            indexScale={{ type: 'band', round: true }}
-            colors={[theme.palette.primary.main, theme.palette.success.main]}
-            borderColor={{
-              from: 'color',
-              modifiers: [['darker', 1.6]]
-            }}
-            axisTop={null}
-            axisRight={null}
-            axisBottom={{
-              tickSize: 5,
-              tickPadding: 5,
-              tickRotation: 0,
-              legend: 'Month',
-              legendPosition: 'middle',
-              legendOffset: 32
-            }}
-            axisLeft={{
-              tickSize: 5,
-              tickPadding: 5,
-              tickRotation: 0,
-              legend: 'Amount',
-              legendPosition: 'middle',
-              legendOffset: -40,
-              format: (value: number) => {
-                return value === 0 ? '$0' : `$${value}`
-              }
-            }}
-            labelSkipWidth={12}
-            labelSkipHeight={12}
-            labelTextColor={{
-              from: 'color',
-              modifiers: [['darker', 1.6]]
-            }}
-            
-            role="application"
-            ariaLabel="Monthly spending bar chart"
-            
-            tooltip={(props) => (
-              <Box
-                sx={{
-                  p: 1,
-                  bgcolor: 'background.paper',
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                  boxShadow: 1
-                }}
-                role="tooltip"
-              >
-                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                  {props.id === 'total' ? 'Total Bills' : 'Paid Bills'}: {formatCurrency(props.value)}
-                </Typography>
-              </Box>
-            )}
-            legends={[
-              {
-                dataFrom: 'keys',
-                anchor: 'bottom-right',
-                direction: 'column',
-                justify: false,
-                translateX: 120,
-                translateY: 0,
-                itemsSpacing: 2,
-                itemWidth: 100,
-                itemHeight: 20,
-                itemDirection: 'left-to-right',
-                itemOpacity: 0.85,
-                symbolSize: 20
-              }
-            ]}
-          />
-        ) : (
+        This bar chart shows spending by month. {chartSummary}
+        {highestMonth && `Highest spending was in ${highestMonth.monthName} at ${highestMonth.formattedTotal}.`}
+        {lowestMonth && `Lowest spending was in ${lowestMonth.monthName} at ${lowestMonth.formattedTotal}.`}
+      </Typography>
+
+      {chartData.length === 0 ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
+          <Typography variant="body1" color="text.secondary">
+            No data available. Add some bills to see your monthly spending.
+          </Typography>
+        </Box>
+      ) : (
+        <>
           <Box 
+            tabIndex={0} 
+            aria-label="Bar chart showing monthly spending trends"
+            onKeyDown={handleChartKeyDown}
             sx={{ 
-              height: '100%', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center' 
+              height: 300, 
+              '&:focus-visible': {
+                outline: '2px solid',
+                outlineColor: 'primary.main',
+                outlineOffset: '2px',
+              } 
             }}
+            role="img"
           >
-            <Typography variant="body1" color="text.secondary">
-              No data available
-            </Typography>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={chartData}
+                margin={{
+                  top: 5,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="month" 
+                  label={{ 
+                    value: 'Month', 
+                    position: 'insideBottom', 
+                    offset: -5 
+                  }} 
+                />
+                <YAxis 
+                  label={{ 
+                    value: 'Amount ($)', 
+                    angle: -90, 
+                    position: 'insideLeft' 
+                  }}
+                  tickFormatter={(value) => `$${value}`}
+                />
+                <Tooltip content={<CustomTooltip />} />
+               
+                <Bar 
+                  dataKey="total" 
+                  name="Monthly Spending" 
+                  fill={theme.palette.primary.main} 
+                  role="graphics-object"
+                  aria-label="Monthly spending data"
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </Box>
-        )}
-      </Box>
-      
-      {/* Add a table for screen readers with the same data */}
-      <VisuallyHidden>
-        <table aria-label="Monthly spending data in table format">
-          <caption>Monthly Spending Summary</caption>
-          <thead>
-            <tr>
-              <th scope="col">Month</th>
-              <th scope="col">Total Bills</th>
-              <th scope="col">Paid Bills</th>
-            </tr>
-          </thead>
-          <tbody>
-            {monthlyData.map((item) => (
-              <tr key={item.month}>
-                <th scope="row">{item.month}</th>
-                <td>{formatCurrency(item.total as number)}</td>
-                <td>{formatCurrency(item.paid as number)}</td>
+          
+          {/* Accessible HTML table alternative */}
+          <table className="sr-only">
+            <caption>Monthly Spending</caption>
+            <thead>
+              <tr>
+                <th scope="col">Month</th>
+                <th scope="col">Amount</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </VisuallyHidden>
+            </thead>
+            <tbody>
+              {chartData.map((item, index) => (
+                <tr key={index}>
+                  <th scope="row">{item.monthName} {item.month.split('/')[1]}</th>
+                  <td>{item.formattedTotal}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
     </Paper>
   );
 }

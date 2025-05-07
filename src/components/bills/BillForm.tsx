@@ -56,6 +56,10 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
   // Context for bill operations
   const { addBill, updateBill } = useBills();
 
+  // Add this function at the beginning of the BillForm component function
+  const formHasErrors = Object.values(errors).some(error => !!error);
+  const formErrorId = formHasErrors ? 'form-errors-summary' : undefined;
+
   // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -134,11 +138,41 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
         {isEditMode ? 'Edit Bill' : 'Add New Bill'}
       </Typography>
       
+      {formHasErrors && (
+        <Box 
+          sx={{ 
+            mb: 2, 
+            p: 2, 
+            bgcolor: 'error.light', 
+            color: 'error.contrastText', 
+            borderRadius: 1 
+          }}
+          id="form-errors-summary"
+          aria-live="polite"
+        >
+          <Typography variant="subtitle1" component="h3" fontWeight="bold">
+            Please fix the following errors:
+          </Typography>
+          <ul>
+            {Object.entries(errors).map(([field, error]) => 
+              error ? (
+                <li key={field}>
+                  <Typography variant="body2">
+                    {field.charAt(0).toUpperCase() + field.slice(1)}: {error}
+                  </Typography>
+                </li>
+              ) : null
+            )}
+          </ul>
+        </Box>
+      )}
+      
       <Box 
         component="form" 
         onSubmit={handleSubmit} 
         noValidate
         aria-labelledby="form-title"
+        aria-describedby={formErrorId}
         sx={{
           '& .MuiFormControl-root': { 
             mb: 2 

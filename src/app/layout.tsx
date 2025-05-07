@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ThemeRegistry from '@/components/theme/ThemeRegistry';
 import Navigation from '@/components/layout/Navigation';
+import { Box, Container } from '@mui/material';
+import { BillProvider } from '@/contexts/BillContext';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +30,30 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeRegistry>
-          <Navigation />
-          <main>{children}</main>
+          <BillProvider>
+            {/* Skip to main content link */}
+            <a href="#main-content" className="skip-link">
+              Skip to main content
+            </a>
+            <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+              <Navigation />
+              <Container 
+                component="main"
+                id="main-content"
+                tabIndex={-1}
+                sx={{ 
+                  flexGrow: 1, 
+                  py: 3,
+                  // Focus styling for skip link navigation
+                  '&:focus': {
+                    outline: 'none',
+                  } 
+                }}
+              >
+                {children}
+              </Container>
+            </Box>
+          </BillProvider>
         </ThemeRegistry>
       </body>
     </html>
