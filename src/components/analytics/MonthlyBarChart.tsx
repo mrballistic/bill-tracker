@@ -1,7 +1,29 @@
 'use client';
 
 import { ResponsiveBar } from '@nivo/bar';
-import { Box, Paper, Typography, useTheme } from '@mui/material';
+import { Box, Paper, Typography, useTheme, BoxProps } from '@mui/material';
+import React, { ReactNode } from 'react';
+
+// Custom VisuallyHidden component for screen reader accessibility
+const VisuallyHidden = ({ children, ...props }: BoxProps & { children: ReactNode }) => (
+  <Box
+    {...props}
+    sx={{
+      border: 0, 
+      clip: 'rect(0 0 0 0)', 
+      height: '1px', 
+      margin: '-1px',
+      overflow: 'hidden', 
+      padding: 0, 
+      position: 'absolute', 
+      width: '1px',
+      whiteSpace: 'nowrap',
+      ...props.sx
+    }}
+  >
+    {children}
+  </Box>
+);
 import { getMonthlySummary, formatCurrency } from '@/lib/staticData';
 
 // Define types for bar chart data
@@ -26,14 +48,31 @@ export default function MonthlyBarChart() {
     total: amount,
     paid: amount * 0.6, // Placeholder calculation - adjust as needed
   }));
+
+  // Create accessible text summary of the chart data for screen readers
+  const accessibleSummary = monthlyData.length > 0
+    ? `Monthly spending summary: ${monthlyData.map(item => 
+        `${item.month}: Total: ${formatCurrency(item.total as number)}, Paid: ${formatCurrency(item.paid as number)}`
+      ).join(', ')}`
+    : 'No monthly spending data is available.';
   
   return (
     <Paper elevation={2} sx={{ height: 400, p: 3 }}>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" component="h2" id="bar-chart-title" gutterBottom>
         Monthly Spending
       </Typography>
       
-      <Box sx={{ height: 320 }}>
+      {/* Visually hidden description for screen readers */}
+      <VisuallyHidden>
+        <p id="bar-chart-desc">{accessibleSummary}</p>
+      </VisuallyHidden>
+      
+      <Box 
+        sx={{ height: 320 }}
+        role="img"
+        aria-labelledby="bar-chart-title"
+        aria-describedby="bar-chart-desc"
+      >
         {monthlyData.length > 0 ? (
           <ResponsiveBar
             data={monthlyData}
@@ -77,6 +116,8 @@ export default function MonthlyBarChart() {
             }}
             
             role="application"
+            ariaLabel="Monthly spending bar chart"
+            
             tooltip={(props) => (
               <Box
                 sx={{
@@ -87,12 +128,29 @@ export default function MonthlyBarChart() {
                   borderRadius: 1,
                   boxShadow: 1
                 }}
+                role="tooltip"
               >
                 <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                   {props.id === 'total' ? 'Total Bills' : 'Paid Bills'}: {formatCurrency(props.value)}
                 </Typography>
               </Box>
             )}
+            legends={[
+              {
+                dataFrom: 'keys',
+                anchor: 'bottom-right',
+                direction: 'column',
+                justify: false,
+                translateX: 120,
+                translateY: 0,
+                itemsSpacing: 2,
+                itemWidth: 100,
+                itemHeight: 20,
+                itemDirection: 'left-to-right',
+                itemOpacity: 0.85,
+                symbolSize: 20
+              }
+            ]}
           />
         ) : (
           <Box 
@@ -109,6 +167,29 @@ export default function MonthlyBarChart() {
           </Box>
         )}
       </Box>
+      
+      {/* Add a table for screen readers with the same data */}
+      <VisuallyHidden>
+        <table aria-label="Monthly spending data in table format">
+          <caption>Monthly Spending Summary</caption>
+          <thead>
+            <tr>
+              <th scope="col">Month</th>
+              <th scope="col">Total Bills</th>
+              <th scope="col">Paid Bills</th>
+            </tr>
+          </thead>
+          <tbody>
+            {monthlyData.map((item) => (
+              <tr key={item.month}>
+                <th scope="row">{item.month}</th>
+                <td>{formatCurrency(item.total as number)}</td>
+                <td>{formatCurrency(item.paid as number)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </VisuallyHidden>
     </Paper>
   );
 }

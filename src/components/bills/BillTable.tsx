@@ -107,7 +107,14 @@ export default function BillTable() {
     <>
       <Paper elevation={2} sx={{ width: '100%', mb: 2 }}>
         <TableContainer>
-          <Table sx={{ minWidth: 650 }} aria-label="bills table">
+          <Table 
+            sx={{ minWidth: 650 }} 
+            aria-label="Bills management table"
+            aria-describedby="bills-table-description"
+          >
+            <caption id="bills-table-description" className="sr-only">
+              Table of bills showing status, name, amount, date, category, and actions
+            </caption>
             <TableHead>
               <TableRow>
                 <TableCell>Status</TableCell>
@@ -137,6 +144,15 @@ export default function BillTable() {
                       size="small"
                       onClick={() => handleTogglePaidStatus(bill.id)}
                       color={bill.isPaid ? 'success' : 'default'}
+                      aria-label={bill.isPaid ? "Mark as unpaid" : "Mark as paid"}
+                      aria-pressed={bill.isPaid}
+                      sx={{
+                        '&:focus-visible': {
+                          outline: '2px solid',
+                          outlineColor: 'primary.main',
+                          outlineOffset: '2px',
+                        },
+                      }}
                     >
                       {bill.isPaid ? <CheckCircleIcon /> : <RadioButtonUncheckedIcon />}
                     </IconButton>
@@ -158,18 +174,42 @@ export default function BillTable() {
                     <IconButton
                       size="small"
                       onClick={() => handleOpenDialog(bill, 'view')}
+                      aria-label={`View details for ${bill.name}`}
+                      sx={{
+                        '&:focus-visible': {
+                          outline: '2px solid',
+                          outlineColor: 'primary.main',
+                          outlineOffset: '2px',
+                        },
+                      }}
                     >
                       <VisibilityIcon fontSize="small" />
                     </IconButton>
                     <IconButton
                       size="small"
                       onClick={() => handleOpenDialog(bill, 'edit')}
+                      aria-label={`Edit ${bill.name}`}
+                      sx={{
+                        '&:focus-visible': {
+                          outline: '2px solid',
+                          outlineColor: 'primary.main',
+                          outlineOffset: '2px',
+                        },
+                      }}
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
                     <IconButton
                       size="small"
                       onClick={() => handleOpenDialog(bill, 'delete')}
+                      aria-label={`Delete ${bill.name}`}
+                      sx={{
+                        '&:focus-visible': {
+                          outline: '2px solid',
+                          outlineColor: 'primary.main',
+                          outlineOffset: '2px',
+                        },
+                      }}
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
@@ -201,6 +241,13 @@ export default function BillTable() {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="Bills per page:"
+          getItemAriaLabel={(type) => {
+            if (type === 'first') return 'Go to first page';
+            if (type === 'last') return 'Go to last page';
+            if (type === 'next') return 'Go to next page';
+            return 'Go to previous page';
+          }}
         />
       </Paper>
 
@@ -210,10 +257,11 @@ export default function BillTable() {
         onClose={handleCloseDialog}
         maxWidth={dialogType === 'edit' ? 'md' : 'sm'}
         fullWidth
+        aria-labelledby="dialog-title"
       >
         {dialogType === 'view' && selectedBill && (
           <>
-            <DialogTitle>Bill Details</DialogTitle>
+            <DialogTitle id="dialog-title">Bill Details</DialogTitle>
             <DialogContent>
               <Box sx={{ mt: 2 }}>
                 <Typography variant="h6">{selectedBill.name}</Typography>
@@ -234,6 +282,7 @@ export default function BillTable() {
                       size="small"
                       color={selectedBill.isPaid ? 'success' : 'default'}
                       variant={selectedBill.isPaid ? 'filled' : 'outlined'}
+                      role="status"
                     />
                   </Typography>
                 </Box>
@@ -250,13 +299,31 @@ export default function BillTable() {
               </Box>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseDialog}>Close</Button>
+              <Button 
+                onClick={handleCloseDialog}
+                sx={{
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: 'primary.main',
+                    outlineOffset: '2px',
+                  },
+                }}
+              >
+                Close
+              </Button>
               <Button 
                 onClick={() => {
                   handleCloseDialog();
                   handleOpenDialog(selectedBill, 'edit');
                 }}
                 color="primary"
+                sx={{
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: 'primary.main',
+                    outlineOffset: '2px',
+                  },
+                }}
               >
                 Edit
               </Button>
@@ -266,7 +333,7 @@ export default function BillTable() {
 
         {dialogType === 'edit' && selectedBill && (
           <>
-            <DialogTitle>Edit Bill</DialogTitle>
+            <DialogTitle id="dialog-title">Edit Bill</DialogTitle>
             <DialogContent>
               <BillForm
                 initialData={selectedBill}
@@ -278,15 +345,37 @@ export default function BillTable() {
 
         {dialogType === 'delete' && (
           <>
-            <DialogTitle>Delete Bill</DialogTitle>
+            <DialogTitle id="dialog-title">Delete Bill</DialogTitle>
             <DialogContent>
               <Typography>
                 Are you sure you want to delete this bill? This action cannot be undone.
               </Typography>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseDialog}>Cancel</Button>
-              <Button onClick={handleConfirmDelete} color="error">
+              <Button 
+                onClick={handleCloseDialog}
+                sx={{
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: 'primary.main',
+                    outlineOffset: '2px',
+                  },
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleConfirmDelete} 
+                color="error"
+                aria-label="Confirm delete bill"
+                sx={{
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: 'error.main',
+                    outlineOffset: '2px',
+                  },
+                }}
+              >
                 Delete
               </Button>
             </DialogActions>

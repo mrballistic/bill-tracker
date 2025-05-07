@@ -130,11 +130,29 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
 
   return (
     <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" component="h2" id="form-title" gutterBottom>
         {isEditMode ? 'Edit Bill' : 'Add New Bill'}
       </Typography>
       
-      <Box component="form" onSubmit={handleSubmit} noValidate>
+      <Box 
+        component="form" 
+        onSubmit={handleSubmit} 
+        noValidate
+        aria-labelledby="form-title"
+        sx={{
+          '& .MuiFormControl-root': { 
+            mb: 2 
+          },
+          '& .MuiButton-root': { 
+            mt: 1,
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: '2px',
+            },
+          }
+        }}
+      >
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
           <Box sx={{ flex: { xs: '0 0 100%', sm: '0 0 calc(50% - 8px)' } }}>
             <TextField
@@ -148,7 +166,14 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
               onChange={handleChange}
               error={!!errors.name}
               helperText={errors.name}
+              aria-required="true"
+              aria-invalid={!!errors.name}
+              aria-describedby={errors.name ? "name-error" : undefined}
+              inputProps={{
+                'aria-label': 'Bill name'
+              }}
             />
+            {errors.name && <span id="name-error" className="sr-only">{errors.name}</span>}
           </Box>
           
           <Box sx={{ flex: { xs: '0 0 100%', sm: '0 0 calc(50% - 8px)' } }}>
@@ -160,12 +185,22 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
               label="Amount ($)"
               name="amount"
               type="number"
-              InputProps={{ inputProps: { min: 0, step: "0.01" } }}
+              InputProps={{ 
+                inputProps: { 
+                  min: 0, 
+                  step: "0.01",
+                  'aria-label': 'Bill amount in dollars'
+                } 
+              }}
               value={formData.amount}
               onChange={handleChange}
               error={!!errors.amount}
               helperText={errors.amount}
+              aria-required="true"
+              aria-invalid={!!errors.amount}
+              aria-describedby={errors.amount ? "amount-error" : undefined}
             />
+            {errors.amount && <span id="amount-error" className="sr-only">{errors.amount}</span>}
           </Box>
           
           <Box sx={{ flex: { xs: '0 0 100%', sm: '0 0 calc(50% - 8px)' } }}>
@@ -182,7 +217,14 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
               error={!!errors.date}
               helperText={errors.date}
               InputLabelProps={{ shrink: true }}
+              aria-required="true"
+              aria-invalid={!!errors.date}
+              aria-describedby={errors.date ? "date-error" : undefined}
+              inputProps={{
+                'aria-label': 'Bill due date'
+              }}
             />
+            {errors.date && <span id="date-error" className="sr-only">{errors.date}</span>}
           </Box>
           
           <Box sx={{ flex: { xs: '0 0 100%', sm: '0 0 calc(50% - 8px)' } }}>
@@ -195,6 +237,10 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
                 value={formData.category}
                 label="Category"
                 onChange={handleSelectChange}
+                aria-label="Bill category"
+                inputProps={{
+                  'aria-label': 'Select bill category'
+                }}
               >
                 {BILL_CATEGORIES.map((category) => (
                   <MenuItem key={category} value={category}>
@@ -216,6 +262,7 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
               rows={3}
               value={formData.notes}
               onChange={handleChange}
+              aria-label="Additional notes about the bill"
             />
           </Box>
           
@@ -227,6 +274,9 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
                   checked={formData.isPaid}
                   onChange={handleChange}
                   color="primary"
+                  inputProps={{
+                    'aria-label': 'Mark bill as paid'
+                  }}
                 />
               }
               label="Paid"
@@ -235,11 +285,20 @@ export default function BillForm({ initialData, onCancel }: BillFormProps) {
           
           <Box sx={{ flex: '0 0 100%', display: 'flex', justifyContent: 'flex-end', mt: 2, gap: 2 }}>
             {onCancel && (
-              <Button onClick={onCancel} variant="outlined">
+              <Button 
+                onClick={onCancel} 
+                variant="outlined"
+                aria-label={isEditMode ? "Cancel editing bill" : "Cancel adding new bill"}
+              >
                 Cancel
               </Button>
             )}
-            <Button type="submit" variant="contained" color="primary">
+            <Button 
+              type="submit" 
+              variant="contained" 
+              color="primary"
+              aria-label={isEditMode ? "Update bill" : "Add new bill"}
+            >
               {isEditMode ? 'Update Bill' : 'Add Bill'}
             </Button>
           </Box>

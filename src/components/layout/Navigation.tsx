@@ -54,16 +54,18 @@ export default function Navigation() {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
+      <Typography variant="h6" component="h2" sx={{ my: 2 }}>
       💸 Financial Bill Tracker
       </Typography>
-      <List>
+      <List role="menu" aria-label="navigation options">
         {navigationItems.map((item) => (
           <ListItem 
             key={item.name}
             component={NextLink as React.ElementType}
             href={item.href}
             selected={pathname === item.href}
+            role="menuitem"
+            aria-current={pathname === item.href ? "page" : undefined}
             sx={{
               textDecoration: 'none', 
               color: 'inherit',
@@ -73,9 +75,14 @@ export default function Navigation() {
                   backgroundColor: 'primary.light',
                 },
               },
+              '&:focus-visible': {
+                outline: '2px solid',
+                outlineColor: 'primary.main',
+                outlineOffset: '2px',
+              },
             }}
           >
-            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemIcon aria-hidden="true">{item.icon}</ListItemIcon>
             <ListItemText primary={item.name} />
           </ListItem>
         ))}
@@ -94,7 +101,9 @@ export default function Navigation() {
                   size="large"
                   edge="start"
                   color="inherit"
-                  aria-label="menu"
+                  aria-label="open navigation menu"
+                  aria-expanded={drawerOpen}
+                  aria-controls="mobile-navigation-menu"
                   sx={{ mr: 2 }}
                   onClick={handleDrawerToggle}
                 >
@@ -103,7 +112,7 @@ export default function Navigation() {
                 <Typography
                   variant="h6"
                   noWrap
-                  component="div"
+                  component="h1"
                   sx={{ flexGrow: 1 }}
                 >
                   💸 Financial Bill Tracker
@@ -125,7 +134,7 @@ export default function Navigation() {
                   <Typography
                     variant="h6"
                     noWrap
-                    component="div"
+                    component="h1"
                     sx={{ 
                       flex: 1,
                       textAlign: 'center'
@@ -135,16 +144,21 @@ export default function Navigation() {
                   </Typography>
                   
                   {/* Right-aligned navigation links */}
-                  <Box sx={{ 
-                    flex: 1, 
-                    display: 'flex', 
-                    justifyContent: 'flex-end'
-                  }}>
+                  <Box 
+                    component="nav" 
+                    aria-label="main navigation"
+                    sx={{ 
+                      flex: 1, 
+                      display: 'flex', 
+                      justifyContent: 'flex-end'
+                    }}
+                  >
                     {navigationItems.map((item) => (
                       <Button
                         key={item.name}
                         component={NextLink as React.ElementType}
                         href={item.href}
+                        aria-current={pathname === item.href ? "page" : undefined}
                         sx={{ 
                           my: 2, 
                           color: 'white', 
@@ -153,6 +167,10 @@ export default function Navigation() {
                           backgroundColor: pathname === item.href ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
                           '&:hover': {
                             backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                          },
+                          '&:focus-visible': {
+                            outline: '2px solid white',
+                            outlineOffset: '2px',
                           },
                           textDecoration: 'none',
                           ml: 1, // Add margin-left to create some space between buttons
@@ -181,6 +199,8 @@ export default function Navigation() {
       </AppBar>
       
       <Drawer
+        id="mobile-navigation-menu"
+        aria-label="mobile navigation"
         anchor="left"
         variant="temporary"
         open={drawerOpen}
