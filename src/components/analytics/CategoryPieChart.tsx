@@ -185,6 +185,7 @@ export default function CategoryPieChart() {
                   cy="50%"
                   labelLine={false}
                   outerRadius={100}
+                  innerRadius={60}
                   fill="#8884d8"
                   dataKey="value"
                   nameKey="name"
