@@ -116,6 +116,8 @@ export default function StaticBillTable() {
                       size="small"
                       onClick={() => handleTogglePaidStatus(bill.id)}
                       color={bill.isPaid ? 'success' : 'default'}
+                      aria-label="Toggle paid status"
+                      data-testid="toggle-status-button"
                     >
                       {bill.isPaid ? <CheckCircleIcon /> : <RadioButtonUncheckedIcon />}
                     </IconButton>
@@ -137,18 +139,24 @@ export default function StaticBillTable() {
                     <IconButton
                       size="small"
                       onClick={() => handleOpenDialog(bill, 'view')}
+                      aria-label="View bill details"
+                      data-testid="view-bill-button"
                     >
                       <VisibilityIcon fontSize="small" />
                     </IconButton>
                     <IconButton
                       size="small"
                       onClick={() => handleOpenDialog(bill, 'edit')}
+                      aria-label="Edit bill"
+                      data-testid="edit-bill-button"
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
                     <IconButton
                       size="small"
                       onClick={() => handleOpenDialog(bill, 'delete')}
+                      aria-label="Delete bill"
+                      data-testid="delete-bill-button"
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>

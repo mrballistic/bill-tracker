@@ -105,13 +105,14 @@ export const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-// Format date to a more readable format
+// Format date to a more readable format (always use UTC for consistency)
 export const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
+  const date = new Date(dateString + 'T00:00:00Z');
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'UTC',
   });
 };
 

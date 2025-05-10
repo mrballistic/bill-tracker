@@ -18,6 +18,11 @@
 - Design principles and rules documented for consistent UI/UX
 - ESLint configuration established with TypeScript and React plugins
 - MIT License added to the project
+- Static export (Next.js `next export`) is fully supported
+- App loads demo data from `/public/data/bills.json` if no user data
+- User changes persist in `localStorage`
+- Data loading and persistence logic is robust
+- Strong automated test coverage (see `coverage/`)
 
 ## What's Left to Build
 
@@ -57,6 +62,7 @@
 
 ## Known Issues
 - None currently - all previous deployment issues resolved
+- None critical at this time
 
 ## Milestones
 1. **Project Setup** - ✅ _Completed_
@@ -91,3 +97,7 @@
    - Add comprehensive form validation ⏳
    - Add bill filtering and search functionality ⏳
    - Implement data export/import capabilities ⏳
+
+## Current Status
+- Static data strategy and static export compatibility are complete
+- App is reliable for both demo and persistent use

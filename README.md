@@ -90,6 +90,24 @@ bill-tracker/
 └── data/             # Local data storage (JSON)
 ```
 
+## Static Data Loading Strategy
+
+- On first load, the app checks `localStorage` for saved bills. If none are found or the array is empty, it fetches demo data from `/data/bills.json` (located in the `public` folder for browser access).
+- All user changes are persisted to `localStorage`.
+- This approach ensures compatibility with static exports (e.g., GitHub Pages) and provides a seamless demo experience.
+- The fetch path respects the `basePath` (see `next.config.ts`) for static hosting.
+
+## Static Export Compatibility
+
+- The app is fully compatible with static export (`next export`) and can be deployed to GitHub Pages or any static host.
+- Demo data is always available via `/data/bills.json` if no user data exists.
+
+## Test Coverage & Reliability
+
+- The project has strong automated test coverage for core logic, context, and UI components.
+- Tests cover data loading, persistence, and user interactions.
+- See the `coverage/` directory for detailed reports.
+
 ## 👨‍💻 Development
 
 The application uses Next.js API routes to handle data persistence:

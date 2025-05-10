@@ -1,7 +1,7 @@
 # Technical Context: Financial Bill Tracker
 
 ## Technology Stack
-- **Frontend Framework**: React 18 with Next.js 13+
+- **Frontend Framework**: React 18 with Next.js 13+ (static export mode supported)
 - **Language**: TypeScript 5.x
 - **UI Library**: Material UI (MUI) v7
 - **State Management**: React Context API
@@ -26,6 +26,10 @@ npm start
 # Run linting
 npm run lint
 ```
+- Demo data file: `public/data/bills.json` (browser-accessible for static hosting)
+- Data loading logic in `src/contexts/BillContext.tsx`
+- Uses `localStorage` for persistence
+- Fetch path respects `basePath` for static hosting
 
 ## Technical Constraints
 - **Browser Support**: Modern browsers only (Chrome, Firefox, Safari, Edge)
@@ -33,6 +37,8 @@ npm run lint
 - **No Backend Services**: All data processing happens client-side
 - **Single User**: No authentication or user management required
 - **Performance**: Needs to handle hundreds of bill entries efficiently
+- Must work with static export (no server-side code at runtime)
+- Demo data must be accessible via browser fetch
 
 ## Dependencies
 ### Core Dependencies
@@ -83,3 +89,7 @@ bill-tracker/
 ├── public/           # Static files
 └── package.json      # Project configuration
 ```
+
+## Test Coverage
+- Strong automated test coverage for logic and UI
+- Coverage reports in `coverage/`

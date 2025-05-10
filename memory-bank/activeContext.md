@@ -1,7 +1,11 @@
 # Active Context: Financial Bill Tracker
 
 ## Current Focus
-The project is in the deployment and refinement phase. We've successfully deployed the application to GitHub Pages and are now focusing on UI improvements, code quality standards, and feature enhancements.
+- Ensuring robust static export compatibility (for GitHub Pages and similar hosts)
+- Data loads from `/public/data/bills.json` if `localStorage` is empty or blank
+- All user changes persist to `localStorage`
+- Fetch path uses `basePath` for static hosting
+- Debug logging added for data source confirmation
 
 ## Recent Changes
 - Created the project structure based on Next.js
@@ -15,6 +19,10 @@ The project is in the deployment and refinement phase. We've successfully deploy
 - Improved analytics dashboard layout with side-by-side charts
 - Documented comprehensive design rules for UI/UX consistency
 - Established ESLint configuration with TypeScript and React plugins
+- Refactored BillContext to always fallback to JSON if no user data
+- Moved demo data to `public/data/bills.json` for browser fetch
+- Confirmed static export works and demo data loads as expected
+- Updated README and memory bank to document static strategy and test coverage
 
 ## Current Technical Solutions
 1. **GitHub Pages Static Deployment**:
@@ -62,3 +70,12 @@ The project is in the deployment and refinement phase. We've successfully deploy
    - Address any remaining ESLint warnings
    - Apply design principles consistently across all components
    - Review accessibility compliance
+
+5. **Static Data Strategy**
+   - Monitor for edge cases in static hosting
+   - Continue to maintain high test coverage
+
+## Decisions & Considerations
+- Only use `localStorage` if it contains a non-empty array
+- Always provide demo data for first-time/static users
+- Static export is a core requirement

@@ -68,3 +68,17 @@ The Financial Bill Tracker follows a simple, component-based architecture using 
                            │    Dashboard      │
                            └───────────────────┘
 ```
+
+## Data Loading & Persistence
+- On app load, check `localStorage` for bills
+- If `localStorage` is empty or blank, fetch demo data from `/data/bills.json` (in `public/`)
+- All user changes are saved to `localStorage`
+- Fetch path uses `basePath` for static hosting (see `next.config.ts`)
+
+## Static Export Compatibility
+- App is designed for static export (e.g., GitHub Pages)
+- Demo data is always available for first-time/static users
+
+## Testing
+- Strong test coverage for data loading, persistence, and UI
+- Coverage reports available in `coverage/`

@@ -21,6 +21,19 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { Bill, BILL_CATEGORIES } from '@/models/Bill';
 
+// Export these handlers to make them easier to test
+export const formHandlers = {
+  handleSelectChange: (
+    setBill: React.Dispatch<React.SetStateAction<Partial<Bill>>>, 
+    e: SelectChangeEvent
+  ) => {
+    const { name, value } = e.target;
+    if (name) {
+      setBill((prev) => ({ ...prev, [name]: value }));
+    }
+  }
+};
+
 export default function StaticBillForm() {
   const [bill, setBill] = useState<Partial<Bill>>({
     name: '',
@@ -47,10 +60,7 @@ export default function StaticBillForm() {
   };
 
   const handleSelectChange = (e: SelectChangeEvent) => {
-    const { name, value } = e.target;
-    if (name) {
-      setBill((prev) => ({ ...prev, [name]: value }));
-    }
+    formHandlers.handleSelectChange(setBill, e);
   };
 
   const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +96,7 @@ export default function StaticBillForm() {
       </Typography>
 
       {submitted ? (
-        <Box sx={{ textAlign: 'center', py: 3 }}>
+        <Box sx={{ textAlign: 'center', py: 3 }} data-testid="bill-submit-success">
           <Typography variant="h6" color="success.main">
             Bill submitted successfully!
           </Typography>
@@ -95,7 +105,7 @@ export default function StaticBillForm() {
           </Typography>
         </Box>
       ) : (
-        <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Box component="form" onSubmit={handleSubmit} noValidate role="form" data-testid="bill-form">
           <Stack spacing={3}>
             <TextField
               required
@@ -105,6 +115,7 @@ export default function StaticBillForm() {
               label="Bill Name"
               value={bill.name}
               onChange={handleTextChange}
+              inputProps={{ "data-testid": "bill-name-input" }}
             />
 
             <TextField
@@ -119,6 +130,7 @@ export default function StaticBillForm() {
               InputProps={{
                 startAdornment: <Box component="span" sx={{ mr: 1 }}>$</Box>,
               }}
+              inputProps={{ "data-testid": "bill-amount-input" }}
             />
 
             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -138,6 +150,7 @@ export default function StaticBillForm() {
                 value={bill.category || ''}
                 label="Category"
                 onChange={handleSelectChange}
+                data-testid="bill-category-select"
               >
                 {BILL_CATEGORIES.map(category => (
                   <MenuItem key={category} value={category}>{category}</MenuItem>
@@ -154,6 +167,7 @@ export default function StaticBillForm() {
                 />
               }
               label="Paid"
+              data-testid="bill-paid-switch"
             />
 
             <Button
@@ -162,6 +176,7 @@ export default function StaticBillForm() {
               variant="contained"
               size="large"
               sx={{ mt: 2 }}
+              data-testid="submit-bill-button"
             >
               Add Bill
             </Button>
