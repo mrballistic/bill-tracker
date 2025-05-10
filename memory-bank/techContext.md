@@ -76,19 +76,16 @@ npm run lint
 - **Performance**: Optimized assets and efficient rendering
 
 ## Project Structure
-```
-bill-tracker/
-├── src/
-│   ├── app/          # App router components  
-│   ├── components/   # Reusable UI components
-│   ├── contexts/     # React Context providers
-│   ├── lib/          # Utility functions
-│   ├── models/       # TypeScript interfaces
-│   ├── pages/        # Page components/routes
-│   └── styles/       # Global styling
-├── public/           # Static files
-└── package.json      # Project configuration
-```
+- `public/`: Static assets and demo data (bills.json)
+- `src/`: All app, component, context, utility, and test code
+- `memory-bank/`: Project documentation and context
+- `coverage/`: Automated test coverage reports
+
+## Data Loading
+- Demo data file: `public/data/bills.json` (browser-accessible for static hosting)
+- Data loading logic in `src/contexts/BillContext.tsx`
+- Uses `localStorage` for persistence
+- Fetch path respects `basePath` for static hosting
 
 ## Test Coverage
 - Strong automated test coverage for logic and UI

@@ -75,20 +75,47 @@ yarn dev
 
 ```
 bill-tracker/
+├── public/                # Static assets for browser (favicons, manifest, demo data)
+│   ├── favicon.ico
+│   ├── apple-touch-icon.png
+│   ├── site.webmanifest
+│   ├── web-app-manifest-192x192.png
+│   ├── web-app-manifest-512x512.png
+│   └── data/
+│       └── bills.json    # Demo/static data file (browser fetchable)
 ├── src/
-│   ├── app/          # App router components  
-│   │   └── api/      # API routes for data persistence
-│   ├── components/   # Reusable UI components
-│   │   ├── analytics/# Chart and analytics components
-│   │   ├── bills/    # Bill form and table components
-│   │   └── layout/   # Navigation and layout components
-│   ├── contexts/     # React Context providers
-│   ├── lib/          # Utility functions
-│   ├── models/       # TypeScript interfaces
-│   └── styles/       # Global styling
-├── public/           # Static assets
-└── data/             # Local data storage (JSON)
+│   ├── app/              # Next.js app directory (layout, pages, analytics)
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── analytics/
+│   │       └── page.tsx
+│   ├── components/       # Reusable UI components (analytics, bills, layout, theme)
+│   ├── contexts/         # React Context providers (BillContext)
+│   ├── lib/              # Utility functions (billUtils, staticData)
+│   ├── models/           # TypeScript interfaces (Bill)
+│   └── __tests__/        # Unit and integration tests
+├── memory-bank/          # Project documentation and context (see Memory Bank docs)
+│   ├── activeContext.md
+│   ├── progress.md
+│   ├── systemPatterns.md
+│   ├── techContext.md
+│   ├── productContext.md
+│   ├── projectbrief.md
+│   └── ...
+├── coverage/             # Automated test coverage reports
+├── data/                 # (Legacy/unused) - not used for runtime data
+├── next.config.ts        # Next.js configuration (static export, basePath)
+├── package.json
+├── README.md
+└── ...
 ```
+
+- All runtime/static assets (favicons, manifest, demo data) are in `public/`.
+- Static data for demo/first load is fetched from `public/data/bills.json`.
+- All user data is persisted in `localStorage`.
+- The `src/` directory contains all app, component, context, utility, and test code.
+- The `memory-bank/` folder contains all project documentation and context files.
+- The `coverage/` folder contains automated test coverage reports.
 
 ## Static Data Loading Strategy
 

@@ -1,13 +1,16 @@
 # Active Context: Financial Bill Tracker
 
 ## Current Focus
-- Ensuring robust static export compatibility (for GitHub Pages and similar hosts)
-- Data loads from `/public/data/bills.json` if `localStorage` is empty or blank
+- Project structure clarified: all static assets and demo data in `public/`, all app code in `src/`, documentation in `memory-bank/`, and test coverage in `coverage/`
+- Data loads from `public/data/bills.json` if `localStorage` is empty or blank
 - All user changes persist to `localStorage`
 - Fetch path uses `basePath` for static hosting
 - Debug logging added for data source confirmation
 
 ## Recent Changes
+- README project structure updated to match actual workspace
+- Confirmed static export works and demo data loads as expected
+- Updated documentation to clarify folder purposes and data flow
 - Created the project structure based on Next.js
 - Defined the technical requirements and stack in the tech-brief.md
 - Established the memory bank documentation system

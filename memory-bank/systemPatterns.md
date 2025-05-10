@@ -79,6 +79,14 @@ The Financial Bill Tracker follows a simple, component-based architecture using 
 - App is designed for static export (e.g., GitHub Pages)
 - Demo data is always available for first-time/static users
 
+## Project Structure Pattern
+- All static assets (favicons, manifest, demo data) are in `public/`
+- Static data for demo/first load is fetched from `public/data/bills.json`
+- All user data is persisted in `localStorage`
+- All app, component, context, utility, and test code is in `src/`
+- Project documentation and context are in `memory-bank/`
+- Automated test coverage reports are in `coverage/`
+
 ## Testing
 - Strong test coverage for data loading, persistence, and UI
 - Coverage reports available in `coverage/`

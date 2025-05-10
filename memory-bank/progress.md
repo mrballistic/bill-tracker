@@ -23,6 +23,11 @@
 - User changes persist in `localStorage`
 - Data loading and persistence logic is robust
 - Strong automated test coverage (see `coverage/`)
+- Project structure documentation is now accurate and up to date
+- All static assets and demo data are in `public/`
+- All app code is in `src/`
+- Documentation and context are in `memory-bank/`
+- Test coverage reports are in `coverage/`
 
 ## What's Left to Build
 
