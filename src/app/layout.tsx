@@ -29,9 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
-        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/bill-tracker/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/bill-tracker/favicon-96x96.png" />
+        <link rel="manifest" href="/bill-tracker/site.webmanifest" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeRegistry>
